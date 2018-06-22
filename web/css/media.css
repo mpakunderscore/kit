@@ -1,0 +1,15 @@
+@media only screen and (max-width : 640px) {
+
+    body {
+        padding-bottom: 0;
+    }
+    header {
+    }
+    .block {
+        margin: 0;
+        border: none;
+
+        border-bottom: 1px solid gray;
+        border-radius: 0;
+    }
+}
