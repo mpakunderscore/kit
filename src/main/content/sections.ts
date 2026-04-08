@@ -1,5 +1,6 @@
 import {
     BROWSER_ENVIRONMENT_KEYS,
+    BROWSER_NETWORK_KEYS,
     BROWSER_SESSION_STATE_KEYS,
 } from '@src/main/content/browserDataKeys'
 import {
@@ -102,8 +103,8 @@ export const APP_SECTIONS: readonly AppSection[] = [
         ],
     },
     {
-        id: 'data_section',
-        label: 'Data',
+        id: 'browser_section',
+        label: 'Browser',
         blocks: [
             {
                 id: 'browser_environment_keys',
@@ -114,6 +115,17 @@ export const APP_SECTIONS: readonly AppSection[] = [
                 id: 'browser_session_state_keys',
                 description: '',
                 fields: buildBrowserKeyFields(BROWSER_SESSION_STATE_KEYS),
+            },
+        ],
+    },
+    {
+        id: 'network_section',
+        label: 'Network',
+        blocks: [
+            {
+                id: 'browser_network_keys',
+                description: '',
+                fields: buildBrowserKeyFields(BROWSER_NETWORK_KEYS),
             },
         ],
     },

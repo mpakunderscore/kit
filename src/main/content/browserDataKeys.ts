@@ -26,7 +26,6 @@ export const BROWSER_ENVIRONMENT_KEYS = [
 ] as const
 
 export const BROWSER_SESSION_STATE_KEYS = [
-    { key: 'navigator.onLine', value: 'Online Status' },
     { key: 'window.innerWidth', value: 'Viewport Width' },
     { key: 'window.innerHeight', value: 'Viewport Height' },
     { key: 'location.href', value: 'Current URL' },
@@ -38,13 +37,14 @@ export const BROWSER_SESSION_STATE_KEYS = [
     { key: 'history.length', value: 'History Length' },
     { key: 'performance.timeOrigin', value: 'Performance Time Origin' },
     { key: 'performance.now', value: 'High Resolution Elapsed Time' },
-    { key: 'navigator.connection.type', value: 'Connection Type' },
-    { key: 'navigator.connection.effectiveType', value: 'Effective Connection Type' },
-    { key: 'navigator.connection.rtt', value: 'Estimated RTT (ms)' },
-    { key: 'navigator.connection.downlink', value: 'Estimated Downlink (Mbps)' },
-    { key: 'navigator.connection.saveData', value: 'Data Saver Enabled' },
     { key: 'navigator.storage.estimate().usage', value: 'Estimated Storage Usage (bytes)' },
     { key: 'navigator.storage.estimate().quota', value: 'Estimated Storage Quota (bytes)' },
+] as const
+
+export const BROWSER_NETWORK_KEYS = [
+    { key: 'location.hostname', value: 'IP' },
+    { key: 'navigator.connection.rtt', value: 'Ping' },
+    { key: 'navigator.connection.downlink', value: 'Download Speed' },
 ] as const
 
 export type BrowserDataKeyItem = {
@@ -55,3 +55,4 @@ export type BrowserDataKeyItem = {
 export type BrowserDataKey =
     | (typeof BROWSER_ENVIRONMENT_KEYS)[number]['key']
     | (typeof BROWSER_SESSION_STATE_KEYS)[number]['key']
+    | (typeof BROWSER_NETWORK_KEYS)[number]['key']

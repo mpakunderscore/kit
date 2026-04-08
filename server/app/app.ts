@@ -12,6 +12,8 @@ const fileName = fileURLToPath(import.meta.url)
 const dirName = path.dirname(fileName)
 
 export const configureApp = (app: Express): void => {
+    app.set('trust proxy', true)
+
     if (isDev) {
         app.use(cors())
     }
