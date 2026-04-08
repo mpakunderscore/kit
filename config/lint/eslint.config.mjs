@@ -19,7 +19,7 @@ export default tseslint.config(
     // Global ignores.
     // ---------------------------------------------------------------------------
     {
-        ignores: ['dist', 'dist-server', 'node_modules', 'android', 'ios'],
+        ignores: ['dist', 'node_modules', 'android', 'ios'],
     },
 
     // ---------------------------------------------------------------------------
@@ -324,48 +324,10 @@ export default tseslint.config(
     },
 
     // ---------------------------------------------------------------------------
-    // Runtime telemetry/effects hooks intentionally synchronize state from async
-    // browser and native APIs, so this React 19 heuristic is too noisy here.
-    // ---------------------------------------------------------------------------
-    {
-        files: [
-            'src/ui/components/common/app-info/useAppInfoRows.ts',
-            'src/ui/hooks/ui/useStabilizingText.ts',
-            'src/ui/components/screens/game/GameScreenContent.tsx',
-            'src/ui/components/screens/game/components/GameControls.tsx',
-            'src/ui/components/screens/game/components/GameTimer.tsx',
-            'src/ui/components/screens/game/levels/AltitudeDeltaMeter.tsx',
-            'src/ui/components/screens/game/levels/DistanceFromStartMeter.tsx',
-            'src/ui/components/screens/game/levels/MotionPeakMeter.tsx',
-            'src/ui/components/screens/game/levels/TextComplexityInput.tsx',
-            'src/ui/components/screens/game/stats/GameStat.tsx',
-            'src/ui/components/screens/settings/SettingsScreen.tsx',
-            'src/ui/components/screens/settings/content/SettingsUserContent.tsx',
-            'src/ui/context/motion/MotionContext.tsx',
-            'src/ui/hooks/app/useBuildTitle.ts',
-            'src/ui/hooks/ui/useAnimatedNumber.ts',
-        ],
-        rules: {
-            '@eslint-react/set-state-in-effect': 'off',
-        },
-    },
-
-    // ---------------------------------------------------------------------------
-    // Webpack configuration may reference sibling directories relatively.
-    // ---------------------------------------------------------------------------
-    {
-        files: ['webpack/**/*.{js,ts}'],
-        rules: {
-            'no-console': 'off',
-            'no-restricted-imports': 'off',
-        },
-    },
-
-    // ---------------------------------------------------------------------------
     // Logger implementations interact with the console directly by design.
     // ---------------------------------------------------------------------------
     {
-        files: ['src/utils/logger/logger.ts', 'server/lib/logger.ts'],
+        files: ['server/lib/logger.ts'],
         rules: {
             'no-console': 'off',
         },

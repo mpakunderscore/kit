@@ -28,6 +28,5 @@ yarn-error.log*
 
 # Local assistant/meta files
 AGENTS.md
-/dist-server/
 /docs/
 /logs/

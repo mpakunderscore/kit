@@ -1,6 +1,6 @@
 module.exports = {
     extends: ['stylelint-config-standard'],
-    ignoreFiles: ['dist/**/*', 'dist-server/**/*', 'node_modules/**/*'],
+    ignoreFiles: ['dist/**/*', 'node_modules/**/*'],
     rules: {
         // Align with AGENTS.md: snake_case only; no BEM-style `__` or `--` in class names.
         'selector-class-pattern': [
