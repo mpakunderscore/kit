@@ -1,4 +1,4 @@
-// import { Prisma } from '@prisma/client'
+// Import { Prisma } from '@prisma/client'
 // import type { Response } from 'express'
 //
 // import { logger } from '@server/lib/logger'
