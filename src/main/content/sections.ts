@@ -1,7 +1,17 @@
+import {
+    BROWSER_ENVIRONMENT_KEYS,
+    BROWSER_SESSION_STATE_KEYS,
+} from '@src/main/content/browserDataKeys'
+import {
+    WEB_API_WITHOUT_PERMISSIONS_NAMES,
+    WEB_API_WITH_PERMISSIONS_NAMES,
+} from '@src/main/content/webApiFullList'
+
 export type SectionFieldTone = 'ok' | 'warn' | 'bad' | 'neutral'
 
 export type SectionField = {
     readonly id: string
+    readonly keyTooltip?: string
     readonly label: string
     readonly tone?: SectionFieldTone
     readonly value: string
@@ -24,6 +34,32 @@ export type MenuSection = {
     readonly label: string
 }
 
+const buildWebApiFields = (
+    apiNames: readonly string[],
+    value: string,
+    tone: SectionFieldTone
+): readonly SectionField[] => {
+    return apiNames.map((apiName, index) => ({
+        id: `web_api_${index + 1}`,
+        label: apiName,
+        value,
+        tone,
+    }))
+}
+
+const toFieldId = (key: string): string => key.toLowerCase().replaceAll(/[^a-z0-9]+/g, '_')
+
+const buildBrowserKeyFields = (
+    keys: readonly { readonly key: string; readonly value: string }[]
+): readonly SectionField[] => {
+    return keys.map(({ key, value }) => ({
+        id: toFieldId(key),
+        keyTooltip: key,
+        label: value,
+        value: '',
+    }))
+}
+
 export const APP_SECTIONS: readonly AppSection[] = [
     {
         id: 'user_section',
@@ -31,31 +67,13 @@ export const APP_SECTIONS: readonly AppSection[] = [
         blocks: [
             {
                 id: 'user_identity',
-                description: 'Mock backend payload for UUID and authentication state.',
-                fields: [
-                    { id: 'uuid', label: 'UUID', value: '8bf3e9ef-9a89-4d1f-8ce5-7d5021eb6d53' },
-                    { id: 'status', label: 'Status', value: 'Active session', tone: 'ok' },
-                    { id: 'issued_at', label: 'Issued At', value: '2026-04-08 14:21:13 UTC' },
-                    { id: 'source', label: 'Source', value: 'GET /api/user/uuid' },
-                    { id: 'ttl', label: 'TTL', value: '24h' },
-                ],
+                description: '',
+                fields: [],
             },
             {
                 id: 'user_profile',
-                description: 'Mock profile attributes used by UI personalization.',
-                fields: [
-                    { id: 'display_name', label: 'Display Name', value: 'Alex Carter' },
-                    { id: 'username', label: 'Username', value: 'alex.carter' },
-                    { id: 'email', label: 'Email', value: 'alex.carter@example.com' },
-                    { id: 'roles', label: 'Roles', value: 'admin, editor' },
-                    { id: 'timezone', label: 'Timezone', value: 'America/Los_Angeles' },
-                    {
-                        id: 'profile_fill',
-                        label: 'Profile Completeness',
-                        value: '82%',
-                        tone: 'warn',
-                    },
-                ],
+                description: '',
+                fields: [],
             },
         ],
     },
@@ -64,47 +82,22 @@ export const APP_SECTIONS: readonly AppSection[] = [
         label: 'Web API',
         blocks: [
             {
-                id: 'web_api_demo',
-                description: 'Mock run states for browser Web API demo actions.',
-                fields: [
-                    { id: 'clipboard', label: 'Clipboard API', value: 'Supported', tone: 'ok' },
-                    {
-                        id: 'geolocation',
-                        label: 'Geolocation API',
-                        value: 'Permission prompt',
-                        tone: 'warn',
-                    },
-                    { id: 'notifications', label: 'Notifications', value: 'Denied', tone: 'bad' },
-                    { id: 'fullscreen', label: 'Fullscreen API', value: 'Supported', tone: 'ok' },
-                    {
-                        id: 'media_devices',
-                        label: 'MediaDevices',
-                        value: 'Supported (2 inputs)',
-                        tone: 'ok',
-                    },
-                ],
+                id: 'web_api_with_permissions',
+                description: '',
+                fields: buildWebApiFields(
+                    WEB_API_WITH_PERMISSIONS_NAMES,
+                    'Permission required',
+                    'warn'
+                ),
             },
             {
-                id: 'web_api_matrix',
-                description: 'Mock feature detection snapshot in current browser.',
-                fields: [
-                    {
-                        id: 'service_worker',
-                        label: 'Service Worker',
-                        value: 'Supported',
-                        tone: 'ok',
-                    },
-                    {
-                        id: 'web_share',
-                        label: 'Web Share',
-                        value: 'Not available on desktop',
-                        tone: 'warn',
-                    },
-                    { id: 'webgpu', label: 'WebGPU', value: 'Unsupported', tone: 'bad' },
-                    { id: 'indexeddb', label: 'IndexedDB', value: 'Supported', tone: 'ok' },
-                    { id: 'push', label: 'Push API', value: 'Supported', tone: 'ok' },
-                    { id: 'payment', label: 'Payment Request', value: 'Supported', tone: 'ok' },
-                ],
+                id: 'web_api_without_permissions',
+                description: '',
+                fields: buildWebApiFields(
+                    WEB_API_WITHOUT_PERMISSIONS_NAMES,
+                    'No permission required',
+                    'ok'
+                ),
             },
         ],
     },
@@ -113,32 +106,14 @@ export const APP_SECTIONS: readonly AppSection[] = [
         label: 'Data',
         blocks: [
             {
-                id: 'server_data',
-                description: 'Mock metadata observed at backend request boundary.',
-                fields: [
-                    { id: 'request_id', label: 'Request ID', value: 'req_9fa602e4d7f1' },
-                    { id: 'ip', label: 'IP', value: '203.0.113.42' },
-                    { id: 'locale', label: 'Accept-Language', value: 'en-US,en;q=0.9' },
-                    {
-                        id: 'user_agent',
-                        label: 'User Agent',
-                        value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X)',
-                    },
-                    { id: 'tls', label: 'TLS', value: 'v1.3', tone: 'ok' },
-                    { id: 'region', label: 'Server Region', value: 'us-west-2' },
-                ],
+                id: 'browser_environment_keys',
+                description: '',
+                fields: buildBrowserKeyFields(BROWSER_ENVIRONMENT_KEYS),
             },
             {
-                id: 'browser_data',
-                description: 'Mock values collected from browser environment APIs.',
-                fields: [
-                    { id: 'language', label: 'navigator.language', value: 'en-US' },
-                    { id: 'timezone', label: 'Intl timezone', value: 'America/Los_Angeles' },
-                    { id: 'viewport', label: 'Viewport', value: '1440 x 900' },
-                    { id: 'online', label: 'navigator.onLine', value: 'true', tone: 'ok' },
-                    { id: 'network', label: 'Connection', value: '4g / 38ms RTT' },
-                    { id: 'storage', label: 'Storage Usage', value: '1.2 MB / 120 MB' },
-                ],
+                id: 'browser_session_state_keys',
+                description: '',
+                fields: buildBrowserKeyFields(BROWSER_SESSION_STATE_KEYS),
             },
         ],
     },

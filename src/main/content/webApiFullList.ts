@@ -8,7 +8,7 @@ export type WebApiEntry = {
 export const WEB_API_FULL_LIST_SOURCE = 'https://developer.mozilla.org/en-US/docs/Web/API'
 export const WEB_API_FULL_LIST_CAPTURED_AT = '2026-04-08'
 
-export const WEB_API_FULL_LIST: readonly WebApiEntry[] = [
+const WEB_API_CATALOG: readonly WebApiEntry[] = [
     { name: 'Attribution Reporting API', tags: ['deprecated'] },
     { name: 'Audio Output Devices API', tags: ['experimental'] },
     { name: 'Audio Session API', tags: ['experimental'] },
@@ -170,6 +170,44 @@ export const WEB_API_FULL_LIST: readonly WebApiEntry[] = [
     { name: 'XMLHttpRequest API' },
 ] as const
 
-export const WEB_API_FULL_NAMES: readonly string[] = WEB_API_FULL_LIST.map(
-    (entry) => entry.name,
+const WEB_API_PERMISSION_REQUIRED_NAMES = new Set<string>([
+    'Audio Output Devices API',
+    'Barcode Detection API',
+    'Clipboard API',
+    'Contact Picker API',
+    'Device orientation events',
+    'Geolocation API',
+    'Idle Detection API',
+    'Local Font Access API',
+    'Media Capture and Streams API (Media Stream)',
+    'MediaStream Image Capture API',
+    'MediaStream Recording API',
+    'Notifications API',
+    'Push API',
+    'Screen Capture API',
+    'Storage Access API',
+    'Web Bluetooth API',
+    'WebHID API',
+    'Web MIDI API',
+    'Web NFC API',
+    'Web Serial API',
+    'Web Speech API',
+    'WebUSB API',
+    'WebXR Device API',
+    'Window Management API',
+])
+
+export const WEB_API_WITH_PERMISSIONS_LIST: readonly WebApiEntry[] = WEB_API_CATALOG.filter(
+    (entry) => WEB_API_PERMISSION_REQUIRED_NAMES.has(entry.name)
 )
+
+export const WEB_API_WITHOUT_PERMISSIONS_LIST: readonly WebApiEntry[] = WEB_API_CATALOG.filter(
+    (entry) => !WEB_API_PERMISSION_REQUIRED_NAMES.has(entry.name)
+)
+
+export const WEB_API_WITH_PERMISSIONS_NAMES: readonly string[] = WEB_API_WITH_PERMISSIONS_LIST.map(
+    (entry) => entry.name
+)
+
+export const WEB_API_WITHOUT_PERMISSIONS_NAMES: readonly string[] =
+    WEB_API_WITHOUT_PERMISSIONS_LIST.map((entry) => entry.name)

@@ -17,7 +17,11 @@ type NavigationProviderProps = {
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
     const { activeSectionId, scrollToSection } = useSectionNavigation(MENU_SECTIONS)
 
-    return <NavigationContext value={{ activeSectionId, scrollToSection }}>{children}</NavigationContext>
+    return (
+        <NavigationContext value={{ activeSectionId, scrollToSection }}>
+            {children}
+        </NavigationContext>
+    )
 }
 
 export const useNavigationContext = (): NavigationContextValue => {

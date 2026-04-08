@@ -7,12 +7,13 @@ const resolveActiveSectionId = (
     currentPosition: number
 ): string => {
     let nextActiveSectionId = menuSections[0]?.id ?? ''
+    const activationPosition = currentPosition + window.innerHeight / 2
 
     for (const section of menuSections) {
         const sectionElement = document.getElementById(section.id)
         if (!sectionElement) continue
 
-        if (sectionElement.offsetTop <= currentPosition) {
+        if (sectionElement.offsetTop <= activationPosition) {
             nextActiveSectionId = section.id
         }
     }
