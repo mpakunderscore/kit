@@ -1,0 +1,12 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../dist/client",
+        "noEmit": false,
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "types": ["vite/client", "node", "@webgpu/types"],
+        "skipLibCheck": true
+    },
+    "include": ["../src/shared/**/*", "../src/client/**/*", "../src/wgsl.d.ts", "../public/**/*"],
+    "exclude": ["../src/server/**/*", "../node_modules", "../dist"]
+}

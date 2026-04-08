@@ -1,0 +1,10 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../dist/server",
+        "noEmit": false,
+        "types": ["node"]
+    },
+    "include": ["../src/shared/**/*", "../src/server/**/*"],
+    "exclude": ["../src/client/**/*", "../node_modules", "../dist"]
+}
