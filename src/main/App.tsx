@@ -8,9 +8,11 @@ const App = () => {
     return (
         <main className={'main'}>
             <Header />
-            <UserSection />
-            <WebAPISection />
-            <DataSection />
+            <>
+                <UserSection />
+                <WebAPISection />
+                <DataSection />
+            </>
             <Footer />
         </main>
     )
