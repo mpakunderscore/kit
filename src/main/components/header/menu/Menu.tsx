@@ -1,20 +1,15 @@
 import { MenuItem } from '@src/main/components/header/menu/MenuItem'
 import { TEXTS } from '@src/main/content/texts'
-import { MenuItemProvider } from '@src/main/context/MenuItemContext'
-import { useMainContext } from '@src/main/context/MainContext'
+import { useAppDataContext } from '@src/main/context/AppDataContext'
 
 export const Menu = () => {
-    const { menuSections } = useMainContext()
+    const { menuSections } = useAppDataContext()
     const texts = TEXTS.header
 
     return (
         <nav aria-label={texts.menuAriaLabel} className={'menu'}>
             {menuSections.map((section) => {
-                return (
-                    <MenuItemProvider key={section.id} section={section}>
-                        <MenuItem />
-                    </MenuItemProvider>
-                )
+                return <MenuItem key={section.id} section={section} />
             })}
         </nav>
     )
