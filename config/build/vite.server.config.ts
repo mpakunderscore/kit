@@ -9,7 +9,10 @@ const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '../..')
 const serverEntry = path.resolve(projectRoot, 'server/server.ts')
 
-const builtins = new Set([...builtinModules, ...builtinModules.map((moduleName) => `node:${moduleName}`)])
+const builtins = new Set([
+    ...builtinModules,
+    ...builtinModules.map((moduleName) => `node:${moduleName}`),
+])
 
 const isExternal = (id: string): boolean => {
     if (id.startsWith('@server/')) {
