@@ -8,7 +8,7 @@ import importPlugin, { createNodeResolver } from 'eslint-plugin-import-x'
 import nPlugin from 'eslint-plugin-n'
 import unicorn from 'eslint-plugin-unicorn'
 
-const repoRoot = path.resolve(import.meta.dirname, '..')
+const repoRoot = path.resolve(import.meta.dirname, '../..')
 
 /**
  * Protocol RED — ESLint Flat Config (ESLint v9+)
