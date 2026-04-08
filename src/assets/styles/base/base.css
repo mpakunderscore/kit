@@ -1,0 +1,30 @@
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+html,
+body {
+    overscroll-behavior-y: none;
+}
+
+html.preload *,
+html.preload *::before,
+html.preload *::after {
+    animation: none !important;
+    transition: none !important;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: radial-gradient(circle at top left, var(--color-bg-glow) 0%, var(--color-bg-0) 55%);
+    color: var(--color-text);
+    font-size: var(--font-size-body);
+    font-family: var(--font-ui);
+}

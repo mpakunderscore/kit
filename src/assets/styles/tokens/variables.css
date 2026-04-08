@@ -1,0 +1,33 @@
+:root {
+    /* Typography */
+    --font-ui: 'Source Sans 3', 'Segoe UI', sans-serif;
+    --font-size-body: 18px;
+
+    /* Layout */
+    --layout-status-min-width: 280px;
+    --layout-status-item-size: 36px;
+
+    /* Spacing scale */
+    --space-0: 4px;
+    --space-1: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+
+    /* Component spacing */
+    --space-action-button-y: 10px;
+    --space-action-button-x: 14px;
+
+    /* Focus */
+    --focus-outline-width: 1px;
+    --focus-outline-width-md: 2px;
+    --focus-outline-offset-sm: 2px;
+    --focus-outline-offset-md: 4px;
+
+    /* Icon size */
+    --icon-status-size: 18px;
+    --icon-live-table-toolbar-size: 18px;
+
+    /* Corner radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+}
