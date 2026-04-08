@@ -1,6 +1,5 @@
 .main {
     min-height: var(--layout-main-min-height);
-    /*padding-top: var(--layout-main-padding-top);*/
 }
 
 .section {
@@ -9,24 +8,24 @@
     justify-content: center;
     width: var(--layout-section-width);
     height: var(--layout-section-min-height);
-    /*padding: var(--space-4) var(--space-3);*/
-    scroll-margin-top: var(--layout-section-scroll-margin-top);
-
     border-bottom: 1px solid var(--color-accent-overlay);
+    scroll-margin-top: var(--layout-section-scroll-margin-top);
 }
 
 .section_grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
     width: min(var(--layout-header-max-width), 100%);
+    gap: var(--space-3);
 }
 
 .section_card {
     display: grid;
     row-gap: var(--space-2);
+    height: 400px;
     margin: 0;
     padding: var(--space-3);
+    overflow: hidden;
     border: var(--border-width-sm) solid var(--color-accent-overlay);
     border-radius: var(--radius-md);
     background: var(--color-accent-overlay);
@@ -49,6 +48,10 @@
     grid-template-columns: minmax(0, 1fr) auto;
     column-gap: var(--space-2);
     align-items: start;
+}
+
+.section_field_row_single {
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .section_field_label {
@@ -76,4 +79,18 @@
 
 .section_field_value_neutral {
     color: inherit;
+}
+
+.section_api_inline_list {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin: 0;
+    gap: var(--space-1) var(--space-2);
+}
+
+.section_api_inline_item {
+    margin: 0;
+    color: var(--color-footer-text);
+    white-space: nowrap;
 }
