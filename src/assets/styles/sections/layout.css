@@ -15,19 +15,21 @@
 .section_grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
     width: min(var(--layout-header-max-width), 100%);
     gap: var(--space-3);
 }
 
 .section_card {
     display: grid;
-    max-height: 800px;
+    align-content: start;
     margin: 0;
     padding: var(--space-2);
     overflow: hidden;
     border: var(--border-width-sm) solid var(--color-accent-overlay);
     border-radius: var(--radius-md);
     background: var(--color-accent-overlay);
+    font-size: var(--font-size-small);
 }
 
 .section_card_description {
@@ -36,17 +38,16 @@
     line-height: var(--line-height-relaxed);
 }
 
-.section_field_list {
-    display: grid;
-    row-gap: var(--space-1);
-    margin: 0;
-}
-
 .section_field_row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     column-gap: var(--space-2);
     align-items: start;
+    align-self: start;
+}
+
+.section_field_row + .section_field_row {
+    margin-top: var(--space-1);
 }
 
 .section_field_row_single {
@@ -60,7 +61,11 @@
 
 .section_field_value {
     margin: 0;
-    font-weight: 600;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-self: end;
     text-align: right;
 }
 

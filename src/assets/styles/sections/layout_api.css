@@ -12,6 +12,15 @@
     white-space: nowrap;
 }
 
+.section_api_inline_item_button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
 .section_api_inline_item[data-tone='ok'] {
     color: var(--color-ok);
 }
@@ -26,4 +35,5 @@
 
 .section_api_inline_item[data-tone='neutral'] {
     color: inherit;
+    opacity: 0.2;
 }
