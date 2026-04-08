@@ -15,3 +15,14 @@
     line-height: var(--line-height-relaxed);
     word-break: break-all;
 }
+
+.footer_toggle {
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: var(--font-size-footer);
+    line-height: var(--line-height-relaxed);
+    text-transform: lowercase;
+    cursor: pointer;
+}

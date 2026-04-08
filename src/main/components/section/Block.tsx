@@ -5,7 +5,6 @@ type BlockProps = {
 }
 
 export const Block = ({ block }: BlockProps) => {
-
     return (
         <article className={'section_card'}>
             <div className={'section_card_description'}>{block.description}</div>
