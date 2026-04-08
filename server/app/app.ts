@@ -8,14 +8,14 @@ import { resolveAppStaticPaths } from '@server/app/paths'
 import { isDev } from '@server/app/runtime'
 import { registerWebRoutes } from '@server/app/web'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const fileName = fileURLToPath(import.meta.url)
+const dirName = path.dirname(fileName)
 
 export const configureApp = (app: Express): void => {
     if (isDev) {
         app.use(cors())
     }
     app.use(express.json())
-    const staticPaths = resolveAppStaticPaths(__dirname)
+    const staticPaths = resolveAppStaticPaths(dirName)
     registerWebRoutes(app, staticPaths)
 }
