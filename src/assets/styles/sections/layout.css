@@ -1,0 +1,11 @@
+.main {
+    min-height: var(--layout-main-min-height);
+    padding-top: var(--layout-main-padding-top);
+}
+
+.section {
+    width: var(--layout-section-width);
+    min-height: var(--layout-section-min-height);
+    padding: var(--space-4) var(--space-3);
+    scroll-margin-top: var(--layout-section-scroll-margin-top);
+}

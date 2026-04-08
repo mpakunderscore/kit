@@ -1,0 +1,15 @@
+.footer {
+    display: grid;
+    margin: 0;
+    padding: var(--space-3);
+    gap: var(--space-1);
+    border-top: var(--border-width-sm) solid var(--color-accent-overlay);
+    color: var(--color-footer-text);
+}
+
+.footer_value {
+    display: block;
+    font-size: var(--font-size-footer);
+    line-height: var(--line-height-relaxed);
+    word-break: break-all;
+}

@@ -6,6 +6,15 @@
     --font-size-body: 18px;
 
     /* Layout */
+    --layout-main-min-height: 100vh;
+    --layout-main-padding-top: 72px;
+    --layout-main-padding-top-mobile: 84px;
+    --layout-header-z-index: 20;
+    --layout-header-max-width: 1200px;
+    --layout-header-backdrop-blur: 10px;
+    --layout-section-width: 100%;
+    --layout-section-min-height: 100vh;
+    --layout-section-scroll-margin-top: 84px;
 
     /* Spacing scale */
     --space-1: 8px;
@@ -15,7 +24,31 @@
 
     /* Icon size */
     --icon-status-size: 18px;
+    --icon-brand-size: 36px;
 
     /* Corner radius */
+    --radius-sm: 8px;
     --radius-md: 16px;
+
+    /* Motion */
+    --transition-fast: 0.2s;
+
+    /* Opacity */
+    --opacity-muted: 0.8;
+
+    /* Border / outline */
+    --border-width-sm: 1px;
+    --outline-width-md: 2px;
+    --outline-offset-sm: 2px;
+
+    /* Typography scale */
+    --font-size-icon: 24px;
+    --font-size-footer: 16px;
+    --line-height-tight: 1;
+    --line-height-relaxed: 1.4;
+
+    /* Text and surface colors */
+    --color-header-bg: rgb(11 16 24 / 90%);
+    --color-header-text: #f8fafc;
+    --color-footer-text: #cbd5e1;
 }
