@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { copyFileSync, existsSync, rmSync } from 'node:fs'
+import { copyFileSync, existsSync, readFileSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
@@ -22,6 +22,27 @@ export default defineConfig({
                     copyFileSync(builtPublicIndex, finalIndex)
                     rmSync(path.join(distClientDir, 'public'), { recursive: true, force: true })
                 }
+            },
+        },
+        {
+            name: 'serve-public-index-in-dev',
+            configureServer(server) {
+                server.middlewares.use(async (req, res, next) => {
+                    if (req.method !== 'GET' || req.url !== '/') {
+                        next()
+                        return
+                    }
+
+                    try {
+                        const html = readFileSync(clientIndexFile, 'utf-8')
+                        const transformed = await server.transformIndexHtml('/', html)
+                        res.statusCode = 200
+                        res.setHeader('Content-Type', 'text/html')
+                        res.end(transformed)
+                    } catch (error) {
+                        next(error)
+                    }
+                })
             },
         },
     ],
@@ -48,10 +69,12 @@ export default defineConfig({
         ],
     },
     server: {
+        host: '0.0.0.0',
         port: 5173,
+        strictPort: true,
         fs: {
             // Allow Vite dev server to serve prebuilt assets from linked engine package.
             allow: [projectRoot],
         },
-    }
+    },
 })
