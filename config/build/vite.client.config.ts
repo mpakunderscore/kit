@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
-import { copyFileSync, existsSync, readFileSync, rmSync } from 'fs'
-import { fileURLToPath } from 'url'
+import { copyFileSync, existsSync, rmSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'vite'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -11,9 +11,7 @@ const clientIndexFile = path.resolve(projectRoot, 'public/index.html')
 
 export default defineConfig({
     plugins: [
-        react({
-            jsxRuntime: 'automatic',
-        }),
+        react(),
         {
             name: 'promote-built-public-index',
             closeBundle() {
@@ -55,12 +53,5 @@ export default defineConfig({
             // Allow Vite dev server to serve prebuilt assets from linked engine package.
             allow: [projectRoot],
         },
-    },
-    optimizeDeps: {
-        rolldownOptions: {
-            moduleTypes: {
-                '.wgsl': 'text',
-            },
-        },
-    },
+    }
 })
