@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "strictPropertyInitialization": false,
+        "useDefineForClassFields": true,
+        "esModuleInterop": true,
+        "baseUrl": ".",
+        "paths": {
+            "@src/*": ["src/*"],
+            "@server/*": ["server/*"],
+            "@components/*": ["src/components/*"],
+            "@styles/*": ["src/assets/styles/*"],
+            "@core/*": ["src/core/*"],
+            "@utils/*": ["src/utils/*"]
+        },
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "jsx": "react-jsx",
+        "allowJs": false,
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "ignoreDeprecations": "6.0",
+        // Ionic/Stencil typings occasionally conflict across versions; we don't want lib .d.ts to block app development.
+        "skipLibCheck": true,
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
+        "types": ["node"]
+    },
+    "include": ["src/**/*", "server/**/*", "config/vitest.config.ts"]
+}
