@@ -1,11 +1,3 @@
-import {
-    accumulateTickMessage,
-    extractNumericFields,
-    isTickMessage,
-    printAggregationSummary,
-    startTickAggregation,
-    type LogOutputFormatter,
-} from '@server/lib/loggerTick'
 
 import {
     LogLevel,
@@ -17,7 +9,7 @@ import {
     type ActiveLogLevel,
     type LoggerContext,
     type LoggerContextValue,
-} from './config'
+} from '@server/lib/logger/config'
 import {
     c,
     formatContext,
@@ -26,8 +18,16 @@ import {
     levelColor,
     sanitizeErrorsInObject,
     stripAnsi,
-} from './format'
-import { consoleMethod, logFileStream } from './sinks'
+} from '@server/lib/logger/format'
+import { consoleMethod, logFileStream } from '@server/lib/logger/sinks'
+import {
+    accumulateTickMessage,
+    extractNumericFields,
+    isTickMessage,
+    printAggregationSummary,
+    startTickAggregation,
+    type LogOutputFormatter,
+} from '@server/lib/loggerTick'
 
 export type { LoggerContext, LoggerContextValue }
 export { LogLevel }
@@ -70,7 +70,12 @@ const resolveMessageText = (args: unknown[]): string | undefined => {
             return arg
         }
 
-        if (typeof arg === 'object' && arg !== null && !Array.isArray(arg) && !(arg instanceof Error)) {
+        if (
+            typeof arg === 'object' &&
+            arg !== null &&
+            !Array.isArray(arg) &&
+            !(arg instanceof Error)
+        ) {
             const objectArg = arg as Record<string, unknown>
             if (typeof objectArg.message === 'string') {
                 return objectArg.message

@@ -1,7 +1,12 @@
 import fileSystem from 'fs'
 import path from 'path'
 
-import { LogLevel, LogOutputMode, logOutputMode, type ActiveLogLevel } from './config'
+import {
+    LogLevel,
+    LogOutputMode,
+    logOutputMode,
+    type ActiveLogLevel,
+} from '@server/lib/logger/config'
 
 type ConsoleFunction = (...args: unknown[]) => void
 type ConsoleMethodName = 'debug' | 'info' | 'warn' | 'error'

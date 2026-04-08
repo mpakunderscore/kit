@@ -4,17 +4,16 @@ import 'dotenv/config'
 import express from 'express'
 
 import { configureApp } from '@server/app/app'
+import { serverPort } from '@server/app/config'
 import { logger } from '@server/lib/logger'
-
-const port = Number(process.env.PORT) || 4000
 
 const startServer = async (): Promise<void> => {
     const app = express()
     configureApp(app)
     const server = http.createServer(app)
 
-    server.listen(port, () => {
-        logger.info(`Server listening on port ${port}`)
+    server.listen(serverPort, () => {
+        logger.info(`Server listening on port ${serverPort}`)
     })
 }
 

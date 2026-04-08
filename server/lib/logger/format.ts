@@ -4,7 +4,7 @@ import {
     withMilliseconds,
     type ActiveLogLevel,
     type LoggerContext,
-} from './config'
+} from '@server/lib/logger/config'
 
 type Colorize = (value: string) => string
 
@@ -89,7 +89,9 @@ export const formatLogArgument = (value: unknown): string => {
 
     const sanitized = sanitizeErrorsInObject(value)
     if (sanitized instanceof Error) {
-        return [sanitized.name, sanitized.message].filter(Boolean).join(': ') || sanitized.toString()
+        return (
+            [sanitized.name, sanitized.message].filter(Boolean).join(': ') || sanitized.toString()
+        )
     }
 
     try {
