@@ -1,15 +1,16 @@
 import { Footer } from '@src/main/components/footer/Footer'
 import { Header } from '@src/main/components/header/Header'
-import { Section } from '@src/main/components/section/Section'
-import { useMainContext } from '@src/main/context/MainContext'
+import { DataSection } from '@src/main/components/section/DataSection'
+import { UserSection } from '@src/main/components/section/UserSection'
+import { WebAPISection } from '@src/main/components/section/WebAPISection'
 
 const App = () => {
-    const {} = useMainContext()
     return (
         <main className={'main'}>
             <Header />
-            <Section />
-            <Section />
+            <UserSection />
+            <WebAPISection />
+            <DataSection />
             <Footer />
         </main>
     )
