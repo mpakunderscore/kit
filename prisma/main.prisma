@@ -1,7 +1,16 @@
 datasource db {
-  provider = "sqlite"
+    provider = "sqlite"
 }
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    uuid      String   @unique @default(uuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("users")
 }
