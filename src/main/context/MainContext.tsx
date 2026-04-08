@@ -1,6 +1,13 @@
 import { createContext, type ReactNode, use } from 'react'
 
-type MainContextValue = {}
+import { MENU_SECTIONS, type MenuSection } from '@src/main/context/menuSections'
+import { useSectionNavigation } from '@src/main/context/useSectionNavigation'
+
+type MainContextValue = {
+    readonly activeSectionId: string
+    readonly menuSections: readonly MenuSection[]
+    readonly scrollToSection: (sectionId: string) => void
+}
 
 const MainContext = createContext<MainContextValue | null>(null)
 
@@ -9,7 +16,19 @@ type MainProviderProps = {
 }
 
 export const MainProvider = ({ children }: MainProviderProps) => {
-    return <MainContext value={{}}>{children}</MainContext>
+    const { activeSectionId, scrollToSection } = useSectionNavigation(MENU_SECTIONS)
+
+    return (
+        <MainContext
+            value={{
+                activeSectionId,
+                menuSections: MENU_SECTIONS,
+                scrollToSection,
+            }}
+        >
+            {children}
+        </MainContext>
+    )
 }
 
 export const useMainContext = (): MainContextValue => {

@@ -1,4 +1,8 @@
 export const TEXTS = {
+    header: {
+        brandAriaLabel: 'Go to first section',
+        menuAriaLabel: 'Section navigation',
+    },
     user: {
         uuidBlockText: 'UUID will be shown here after it is received from backend.',
         profileBlockText: 'Additional user data will be shown here.',

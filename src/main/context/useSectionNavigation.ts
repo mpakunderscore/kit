@@ -2,9 +2,6 @@ import { useCallback, useEffect, useState } from 'react'
 
 import type { MenuSection } from '@src/main/context/menuSections'
 
-const ACTIVE_SECTION_OFFSET_PX = 16
-const SCROLL_TO_SECTION_OFFSET_PX = 8
-
 const getHeaderHeight = (): number => {
     const headerElement = document.querySelector('.header') as HTMLElement | null
     return headerElement?.offsetHeight ?? 0
@@ -42,7 +39,7 @@ export const useSectionNavigation = (
         if (menuSections.length === 0) return
 
         const headerHeight = getHeaderHeight()
-        const currentPosition = window.scrollY + headerHeight + ACTIVE_SECTION_OFFSET_PX
+        const currentPosition = window.scrollY + headerHeight
         const nextActiveSectionId = resolveActiveSectionId(menuSections, currentPosition)
 
         setActiveSectionId(nextActiveSectionId)
@@ -53,11 +50,7 @@ export const useSectionNavigation = (
         if (!targetElement) return
 
         const headerHeight = getHeaderHeight()
-        const targetTop =
-            targetElement.getBoundingClientRect().top +
-            window.scrollY -
-            headerHeight -
-            SCROLL_TO_SECTION_OFFSET_PX
+        const targetTop = targetElement.getBoundingClientRect().top + window.scrollY - headerHeight
 
         window.scrollTo({
             behavior: 'smooth',

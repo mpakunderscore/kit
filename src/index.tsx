@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 
 import { createRoot } from 'react-dom/client'
 
+import '@src/assets/styles/index.css'
 import App from '@src/main/App'
 import { MainProvider } from '@src/main/context/MainContext'
 
