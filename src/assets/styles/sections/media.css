@@ -1,15 +1,22 @@
+/* <=1200px: шаг для небольших ноутбуков; уменьшаем боковые отступы, чтобы сохранить полезную ширину контента. */
 @media (width <= 1200px) {
     .section {
         padding-inline: var(--space-3);
     }
 }
 
+/* <=992px: планшетный диапазон; переводим сетку в одну колонку и еще сжимаем отступы для стабильной читабельности. */
 @media (width <= 992px) {
     .section {
         padding-inline: var(--space-2);
     }
+
+    .section_grid {
+        grid-template-columns: 1fr;
+    }
 }
 
+/* <=768px: мобильный брейкпоинт; адаптируем шапку/меню и высоту/отступы секций под узкий экран и вертикальный скролл. */
 @media (width <= 768px) {
     .main {
         padding-top: var(--layout-main-padding-top-mobile);
@@ -23,5 +30,10 @@
     .menu {
         flex-wrap: wrap;
         margin-left: 0;
+    }
+
+    .section {
+        min-height: var(--layout-section-min-height-mobile);
+        padding-block: var(--space-3);
     }
 }

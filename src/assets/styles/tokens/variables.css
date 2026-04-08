@@ -13,7 +13,8 @@
     --layout-header-max-width: 1200px;
     --layout-header-backdrop-blur: 10px;
     --layout-section-width: 100%;
-    --layout-section-min-height: 100vh;
+    --layout-section-min-height: calc(100dvh);
+    --layout-section-min-height-mobile: calc(100dvh - var(--layout-main-padding-top-mobile));
     --layout-section-scroll-margin-top: 84px;
 
     /* Spacing scale */
@@ -23,7 +24,7 @@
     --space-4: 32px;
 
     /* Icon size */
-    --icon-status-size: 18px;
+    --icon-status-size: 16px;
     --icon-brand-size: 36px;
 
     /* Corner radius */
@@ -47,8 +48,4 @@
     --line-height-tight: 1;
     --line-height-relaxed: 1.4;
 
-    /* Text and surface colors */
-    --color-header-bg: rgb(11 16 24 / 90%);
-    --color-header-text: #f8fafc;
-    --color-footer-text: #cbd5e1;
 }

@@ -9,7 +9,6 @@
     justify-content: space-between;
     padding: var(--space-2) var(--space-3);
     gap: var(--space-2);
-    border-bottom: var(--border-width-sm) solid var(--color-accent-overlay);
     backdrop-filter: blur(var(--layout-header-backdrop-blur));
     background: var(--color-header-bg);
     color: var(--color-header-text);
@@ -18,6 +17,9 @@
 .header_brand {
     display: inline-flex;
     align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
     cursor: pointer;
 }
 
@@ -48,9 +50,13 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-1) var(--space-2);
+    border: 0;
     border-radius: var(--radius-sm);
+    background: transparent;
     color: var(--color-header-text);
+    font: inherit;
     text-decoration: none;
+    cursor: pointer;
     opacity: var(--opacity-muted);
     transition:
         opacity var(--transition-fast) ease,

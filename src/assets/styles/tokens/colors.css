@@ -9,4 +9,9 @@
     --color-bad-overlay: rgb(239 68 68 / 12%);
     --color-accent-overlay: rgb(56 189 248 / 12%);
     --color-disabled-overlay: rgb(128 128 128 / 14%);
+
+    /* Text and surface */
+    --color-header-bg: rgb(11 16 24 / 70%);
+    --color-header-text: #f8fafc;
+    --color-footer-text: #cbd5e1;
 }
