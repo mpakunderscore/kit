@@ -23,8 +23,6 @@ html.preload *::after {
 }
 
 body {
-    background: radial-gradient(circle at top left, var(--color-bg-glow) 0%, var(--color-bg-0) 55%);
-    color: var(--color-text);
     font-size: var(--font-size-body);
     font-family: var(--font-ui);
 }
