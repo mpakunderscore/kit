@@ -1,0 +1,49 @@
+import path from 'node:path'
+import { builtinModules } from 'node:module'
+import { fileURLToPath } from 'node:url'
+
+import { defineConfig } from 'vite'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const projectRoot = path.resolve(__dirname, '../..')
+const serverEntry = path.resolve(projectRoot, 'server/server.ts')
+
+const builtins = new Set([...builtinModules, ...builtinModules.map((moduleName) => `node:${moduleName}`)])
+
+const isExternal = (id: string): boolean => {
+    if (id.startsWith('@server/')) {
+        return false
+    }
+    if (builtins.has(id)) {
+        return true
+    }
+    if (id.startsWith('.') || path.isAbsolute(id)) {
+        return false
+    }
+    return true
+}
+
+export default defineConfig({
+    root: projectRoot,
+    publicDir: false,
+    resolve: {
+        alias: {
+            '@server': path.resolve(projectRoot, 'server'),
+        },
+    },
+    build: {
+        ssr: serverEntry,
+        outDir: path.resolve(projectRoot, 'dist/server'),
+        emptyOutDir: true,
+        sourcemap: true,
+        rollupOptions: {
+            external: isExternal,
+            output: {
+                format: 'cjs',
+                entryFileNames: 'server.cjs',
+                inlineDynamicImports: true,
+            },
+        },
+    },
+})
