@@ -21,10 +21,9 @@
 
 .section_card {
     display: grid;
-    row-gap: var(--space-2);
-    height: 400px;
+    max-height: 800px;
     margin: 0;
-    padding: var(--space-3);
+    padding: var(--space-2);
     overflow: hidden;
     border: var(--border-width-sm) solid var(--color-accent-overlay);
     border-radius: var(--radius-md);
@@ -79,18 +78,4 @@
 
 .section_field_value_neutral {
     color: inherit;
-}
-
-.section_api_inline_list {
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    margin: 0;
-    gap: var(--space-1) var(--space-2);
-}
-
-.section_api_inline_item {
-    margin: 0;
-    color: var(--color-footer-text);
-    white-space: nowrap;
 }
