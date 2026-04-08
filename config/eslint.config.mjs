@@ -19,7 +19,7 @@ export default tseslint.config(
     // Global ignores.
     // ---------------------------------------------------------------------------
     {
-        ignores: ['dist', 'dist-server', 'node_modules', 'android', 'ios', '**/.*/**'],
+        ignores: ['dist', 'dist-server', 'node_modules', 'android', 'ios'],
     },
 
     // ---------------------------------------------------------------------------
@@ -88,6 +88,11 @@ export default tseslint.config(
                 'error',
                 {
                     patterns: [
+                        {
+                            group: ['./*', './**'],
+                            message:
+                                'Use path aliases defined in tsconfig.json instead of relative same-folder imports.',
+                        },
                         {
                             group: ['../*', '../**'],
                             message:
@@ -357,20 +362,10 @@ export default tseslint.config(
     },
 
     // ---------------------------------------------------------------------------
-    // Node VM sandbox uses node:vm.createContext, unrelated to React context API.
-    // ---------------------------------------------------------------------------
-    {
-        files: ['src/server/strategy/StrategySandbox.ts'],
-        rules: {
-            '@eslint-react/naming-convention-context-name': 'off',
-        },
-    },
-
-    // ---------------------------------------------------------------------------
     // Logger implementations interact with the console directly by design.
     // ---------------------------------------------------------------------------
     {
-        files: ['src/utils/logger/logger.ts', 'server/lib/logger/logger.ts'],
+        files: ['src/utils/logger/logger.ts', 'server/lib/logger.ts'],
         rules: {
             'no-console': 'off',
         },

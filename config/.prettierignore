@@ -9,9 +9,6 @@ ios/
 # Dependencies
 node_modules/
 
-# Hidden directories
-.*/**
-
 # Env files
 .env
 .env.local
