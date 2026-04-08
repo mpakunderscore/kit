@@ -19,9 +19,11 @@ const isUserResponse = (value: unknown): value is UserResponse => {
 }
 
 export const requestUser = async (): Promise<UserResponse> => {
-    const response = await fetch('/api/user')
+    const apiUrl = `${window.location.protocol}//${window.location.hostname}:${PORT}/api/user`
+    console.log(`Requesting ${apiUrl}`)
+    const response = await fetch(apiUrl)
     if (!response.ok) {
-        throw new Error(`Failed to load /api/user: ${response.status}`)
+        throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
     }
 
     const payload: unknown = await response.json()

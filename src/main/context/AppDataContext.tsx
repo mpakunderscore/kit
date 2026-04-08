@@ -1,40 +1,7 @@
 import { createContext, type ReactNode, use, useEffect, useMemo, useState } from 'react'
 
 import { APP_SECTIONS, type AppSection, type MenuSection } from '@src/main/content/sections'
-
-type UserResponse = {
-    readonly uuid: string
-    readonly createdAt: string
-    readonly updatedAt: string
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === 'object' && value !== null
-}
-
-const isUserResponse = (value: unknown): value is UserResponse => {
-    if (!isRecord(value)) return false
-
-    return (
-        typeof value.uuid === 'string' &&
-        typeof value.createdAt === 'string' &&
-        typeof value.updatedAt === 'string'
-    )
-}
-
-const requestUser = async (): Promise<UserResponse> => {
-    const response = await fetch('/api/user')
-    if (!response.ok) {
-        throw new Error(`Failed to load /api/user: ${response.status}`)
-    }
-
-    const payload: unknown = await response.json()
-    if (!isUserResponse(payload)) {
-        throw new Error('Invalid /api/user payload')
-    }
-
-    return payload
-}
+import { requestUser, type UserResponse } from '@src/main/network/httpApi'
 
 const applyUserToSections = (
     appSections: readonly AppSection[],

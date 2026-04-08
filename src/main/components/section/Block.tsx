@@ -16,13 +16,12 @@ export const Block = ({ block }: BlockProps) => {
             {isWebApiInlineListBlock ? (
                 <div className={'section_api_inline_list'}>
                     {block.fields.map((field, fieldIndex) => {
-                        const inlineItemClassName =
-                            field.tone === undefined
-                                ? 'section_api_inline_item'
-                                : `section_api_inline_item section_field_value_${field.tone}`
-
                         return (
-                            <span className={inlineItemClassName} key={`${block.id}_${field.id}`}>
+                            <span
+                                className={'section_api_inline_item'}
+                                data-tone={field.tone}
+                                key={`${block.id}_${field.id}`}
+                            >
                                 {field.label}
                                 {fieldIndex < block.fields.length - 1 ? ',' : ''}
                             </span>
