@@ -4,7 +4,8 @@ import { createRoot } from 'react-dom/client'
 
 import '@src/assets/styles/index.css'
 import App from '@src/main/App'
-import { MainProvider } from '@src/main/context/MainContext'
+import { AppDataProvider } from '@src/main/context/AppDataContext'
+import { NavigationProvider } from '@src/main/context/NavigationContext'
 
 const rootElement = document.getElementById('root')
 
@@ -14,8 +15,10 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
     <StrictMode>
-        <MainProvider>
-            <App />
-        </MainProvider>
+        <AppDataProvider>
+            <NavigationProvider>
+                <App />
+            </NavigationProvider>
+        </AppDataProvider>
     </StrictMode>
 )

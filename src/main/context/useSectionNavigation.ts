@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import type { MenuSection } from '@src/main/context/menuSections'
-
-const getHeaderHeight = (): number => {
-    const headerElement = document.querySelector('.header') as HTMLElement | null
-    return headerElement?.offsetHeight ?? 0
-}
+import type { MenuSection } from '@src/main/content/sections'
 
 const resolveActiveSectionId = (
     menuSections: readonly MenuSection[],
@@ -25,6 +20,15 @@ const resolveActiveSectionId = (
     return nextActiveSectionId
 }
 
+const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): string => {
+    if (menuSections.length === 0) return ''
+    if (typeof window === 'undefined') return menuSections[0]?.id ?? ''
+
+    const currentPosition = window.scrollY
+
+    return resolveActiveSectionId(menuSections, currentPosition)
+}
+
 type UseSectionNavigationValue = {
     readonly activeSectionId: string
     readonly scrollToSection: (sectionId: string) => void
@@ -33,13 +37,14 @@ type UseSectionNavigationValue = {
 export const useSectionNavigation = (
     menuSections: readonly MenuSection[]
 ): UseSectionNavigationValue => {
-    const [activeSectionId, setActiveSectionId] = useState<string>(menuSections[0]?.id ?? '')
+    const [activeSectionId, setActiveSectionId] = useState<string>(() =>
+        getInitialActiveSectionId(menuSections)
+    )
 
     const updateActiveSection = useCallback(() => {
         if (menuSections.length === 0) return
 
-        const headerHeight = getHeaderHeight()
-        const currentPosition = window.scrollY + headerHeight
+        const currentPosition = window.scrollY
         const nextActiveSectionId = resolveActiveSectionId(menuSections, currentPosition)
 
         setActiveSectionId(nextActiveSectionId)
@@ -49,8 +54,7 @@ export const useSectionNavigation = (
         const targetElement = document.getElementById(sectionId)
         if (!targetElement) return
 
-        const headerHeight = getHeaderHeight()
-        const targetTop = targetElement.getBoundingClientRect().top + window.scrollY - headerHeight
+        const targetTop = targetElement.getBoundingClientRect().top + window.scrollY
 
         window.scrollTo({
             behavior: 'smooth',
@@ -59,7 +63,6 @@ export const useSectionNavigation = (
     }, [])
 
     useEffect(() => {
-        updateActiveSection()
         window.addEventListener('scroll', updateActiveSection, { passive: true })
         window.addEventListener('resize', updateActiveSection)
 

@@ -1,18 +1,17 @@
 import { Footer } from '@src/main/components/footer/Footer'
 import { Header } from '@src/main/components/header/Header'
-import { DataSection } from '@src/main/components/section/DataSection'
-import { UserSection } from '@src/main/components/section/UserSection'
-import { WebAPISection } from '@src/main/components/section/WebAPISection'
+import { Section } from '@src/main/components/section/Section'
+import { useAppDataContext } from '@src/main/context/AppDataContext'
 
 const App = () => {
+    const { appSections } = useAppDataContext()
+
     return (
         <main className={'main'}>
             <Header />
-            <>
-                <UserSection />
-                <WebAPISection />
-                <DataSection />
-            </>
+            {appSections.map((section) => (
+                <Section key={section.id} section={section} />
+            ))}
             <Footer />
         </main>
     )

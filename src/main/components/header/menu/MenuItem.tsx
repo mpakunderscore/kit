@@ -1,28 +1,20 @@
-import type { KeyboardEvent } from 'react'
+import { useMainContext } from '@src/main/context/MainContext'
+import { useMenuItemContext } from '@src/main/context/MenuItemContext'
 
-type MenuItemProps = {
-    readonly isActive: boolean
-    readonly label: string
-    readonly onClick: () => void
-}
-
-export const MenuItem = ({ isActive, label, onClick }: MenuItemProps) => {
+export const MenuItem = () => {
+    const { activeSectionId, scrollToSection } = useMainContext()
+    const { id, label } = useMenuItemContext()
+    const isActive = activeSectionId === id
     const linkClassName = isActive ? 'menu_link menu_link_active' : 'menu_link'
-    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return
-        event.preventDefault()
-        onClick()
-    }
 
     return (
-        <div
+        <button
+            aria-current={isActive ? 'page' : undefined}
             className={linkClassName}
-            onKeyDown={handleKeyDown}
-            onClick={onClick}
-            role={'button'}
-            tabIndex={0}
+            onClick={() => scrollToSection(id)}
+            type={'button'}
         >
             {label}
-        </div>
+        </button>
     )
 }

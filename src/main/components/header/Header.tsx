@@ -1,11 +1,11 @@
-import type { KeyboardEvent } from 'react'
-
 import { Menu } from '@src/main/components/header/menu/Menu'
 import { TEXTS } from '@src/main/content/texts'
-import { useMainContext } from '@src/main/context/MainContext'
+import { useAppDataContext } from '@src/main/context/AppDataContext'
+import { useNavigationContext } from '@src/main/context/NavigationContext'
 
 export const Header = () => {
-    const { menuSections, scrollToSection } = useMainContext()
+    const { menuSections } = useAppDataContext()
+    const { scrollToSection } = useNavigationContext()
     const texts = TEXTS.header
     const firstSectionId = menuSections[0]?.id ?? ''
 
@@ -14,24 +14,16 @@ export const Header = () => {
         scrollToSection(firstSectionId)
     }
 
-    const handleBrandKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return
-        event.preventDefault()
-        handleBrandClick()
-    }
-
     return (
         <header className={'header'}>
-            <div
+            <button
                 aria-label={texts.brandAriaLabel}
                 className={'header_brand'}
                 onClick={handleBrandClick}
-                onKeyDown={handleBrandKeyDown}
-                role={'button'}
-                tabIndex={0}
+                type={'button'}
             >
                 <img alt={''} className={'header_logo'} src={'/icons/icon-192.png'} />
-            </div>
+            </button>
             <Menu />
         </header>
     )

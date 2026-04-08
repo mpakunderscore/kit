@@ -1,16 +1,20 @@
 import { Block } from '@src/main/components/section/Block'
+import { BlockProvider } from '@src/main/context/BlockContext'
+import { useSectionContext } from '@src/main/context/SectionContext'
 
-type SectionProps = {
-    readonly blocks: readonly string[]
-    readonly id: string
-}
-
-export const Section = ({ blocks, id }: SectionProps) => {
+export const Section = () => {
+    const { blocks, id } = useSectionContext()
     return (
         <section className={'section'} id={id}>
-            {blocks.map((text, index) => {
-                return <Block key={`${id}_${index}`} text={text} />
-            })}
+            <div className={'section_grid'}>
+                {blocks.map((block) => {
+                    return (
+                        <BlockProvider block={block} key={id + '_' + block.id}>
+                            <Block />
+                        </BlockProvider>
+                    )
+                })}
+            </div>
         </section>
     )
 }

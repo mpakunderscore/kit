@@ -1,10 +1,11 @@
 import { createContext, type ReactNode, use } from 'react'
 
-import { MENU_SECTIONS, type MenuSection } from '@src/main/context/menuSections'
+import { APP_SECTIONS, MENU_SECTIONS, type AppSection, type MenuSection } from '@src/main/content/sections'
 import { useSectionNavigation } from '@src/main/context/useSectionNavigation'
 
 type MainContextValue = {
     readonly activeSectionId: string
+    readonly appSections: readonly AppSection[]
     readonly menuSections: readonly MenuSection[]
     readonly scrollToSection: (sectionId: string) => void
 }
@@ -22,6 +23,7 @@ export const MainProvider = ({ children }: MainProviderProps) => {
         <MainContext
             value={{
                 activeSectionId,
+                appSections: APP_SECTIONS,
                 menuSections: MENU_SECTIONS,
                 scrollToSection,
             }}
