@@ -1,6 +1,6 @@
-import { TEXTS } from '@src/main/content/texts'
 import { Block } from '@src/main/components/section/block/Block'
 import { Section } from '@src/main/components/section/Section'
+import { TEXTS } from '@src/main/content/texts'
 
 export const UserSection = () => {
     const texts = TEXTS.user

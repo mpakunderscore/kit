@@ -5,9 +5,5 @@ type SectionProps = {
 }
 
 export const Section = ({ children }: SectionProps) => {
-    return (
-        <section className={'section'}>
-            {children}
-        </section>
-    )
+    return <section className={'section'}>{children}</section>
 }
