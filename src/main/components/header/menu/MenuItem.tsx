@@ -1,9 +1,13 @@
-import { useMainContext } from '@src/main/context/MainContext'
-import { useMenuItemContext } from '@src/main/context/MenuItemContext'
+import type { MenuSection } from '@src/main/content/sections'
+import { useNavigationContext } from '@src/main/context/NavigationContext'
 
-export const MenuItem = () => {
-    const { activeSectionId, scrollToSection } = useMainContext()
-    const { id, label } = useMenuItemContext()
+type MenuItemProps = {
+    readonly section: MenuSection
+}
+
+export const MenuItem = ({ section }: MenuItemProps) => {
+    const { activeSectionId, scrollToSection } = useNavigationContext()
+    const { id, label } = section
     const isActive = activeSectionId === id
     const linkClassName = isActive ? 'menu_link menu_link_active' : 'menu_link'
 

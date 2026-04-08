@@ -1,7 +1,10 @@
-import { useBlockContext } from '@src/main/context/BlockContext'
+import type { SectionBlock } from '@src/main/content/sections'
 
-export const Block = () => {
-    const block = useBlockContext()
+type BlockProps = {
+    readonly block: SectionBlock
+}
+
+export const Block = ({ block }: BlockProps) => {
 
     return (
         <article className={'section_card'}>
