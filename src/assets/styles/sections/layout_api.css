@@ -1,0 +1,29 @@
+.section_api_inline_list {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    margin: 0;
+    gap: var(--space-1);
+}
+
+.section_api_inline_item {
+    margin: 0;
+    color: var(--color-footer-text);
+    white-space: nowrap;
+}
+
+.section_api_inline_item[data-tone='ok'] {
+    color: var(--color-ok);
+}
+
+.section_api_inline_item[data-tone='warn'] {
+    color: var(--color-warn);
+}
+
+.section_api_inline_item[data-tone='bad'] {
+    color: var(--color-bad);
+}
+
+.section_api_inline_item[data-tone='neutral'] {
+    color: inherit;
+}
