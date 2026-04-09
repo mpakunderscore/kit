@@ -3,6 +3,7 @@ import {
     BROWSER_NETWORK_KEYS,
     BROWSER_SESSION_STATE_KEYS,
 } from '@src/main/content/browserDataKeys'
+import { PROJECT_INFO_KEYS } from '@src/main/content/projectDataKeys'
 import {
     WEB_API_WITHOUT_PERMISSIONS_NAMES,
     WEB_API_WITH_PERMISSIONS_NAMES,
@@ -127,6 +128,17 @@ export const APP_SECTIONS: readonly AppSection[] = [
                 id: 'browser_network_keys',
                 description: '',
                 fields: buildBrowserKeyFields(BROWSER_NETWORK_KEYS),
+            },
+        ],
+    },
+    {
+        id: 'project_section',
+        label: 'Project',
+        blocks: [
+            {
+                id: 'project_package_keys',
+                description: '',
+                fields: buildBrowserKeyFields(PROJECT_INFO_KEYS),
             },
         ],
     },
