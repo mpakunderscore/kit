@@ -1,11 +1,11 @@
-/* <=1200px: шаг для небольших ноутбуков; уменьшаем боковые отступы, чтобы сохранить полезную ширину контента. */
+/* <=1200px: small laptop breakpoint; reduce horizontal padding to preserve usable content width. */
 @media (width <= 1200px) {
     .section {
         padding-inline: var(--space-3);
     }
 }
 
-/* <=992px: планшетный диапазон; переводим сетку в одну колонку и еще сжимаем отступы для стабильной читабельности. */
+/* <=992px: tablet range; switch grid to one column and tighten spacing for stable readability. */
 @media (width <= 992px) {
     .section {
         padding-inline: var(--space-2);
@@ -14,26 +14,69 @@
     .section_grid {
         grid-template-columns: 1fr;
     }
+
+    .section_grid_single > .section_card {
+        width: 100%;
+    }
 }
 
-/* <=768px: мобильный брейкпоинт; адаптируем шапку/меню и высоту/отступы секций под узкий экран и вертикальный скролл. */
+/* <=768px: mobile breakpoint; adapt header/menu and section height/spacing for narrow screens and vertical scroll. */
 @media (width <= 768px) {
     .main {
-        padding-top: var(--layout-main-padding-top-mobile);
+        padding-top: 0;
+        padding-bottom: calc((var(--space-2) * 2) + 44px);
     }
 
     .header {
+        top: auto;
+        bottom: 0;
+        min-height: calc((var(--space-2) * 2) + 44px);
         flex-wrap: wrap;
-        justify-content: flex-start;
+        justify-content: center;
+    }
+
+    .header_brand {
+        display: none;
     }
 
     .menu {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
         margin-left: 0;
     }
 
+    .menu_link {
+        min-width: 44px;
+        min-height: 44px;
+        padding-inline: var(--space-1);
+    }
+
+    .menu_link_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-icon);
+        line-height: 0;
+    }
+
+    .menu_link_icon > svg {
+        display: block;
+    }
+
+    .menu_link_label {
+        display: none;
+    }
+
     .section {
-        min-height: var(--layout-section-min-height-mobile);
+        height: auto;
+        min-height: 100dvh;
+        padding-inline: 0;
         padding-block: var(--space-3);
+    }
+
+    .section_card {
+        border-radius: 0;
     }
 }

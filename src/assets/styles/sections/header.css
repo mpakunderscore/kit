@@ -76,3 +76,12 @@
     outline: var(--outline-width-md) solid var(--color-accent);
     outline-offset: var(--outline-offset-sm);
 }
+
+.menu_link_icon {
+    display: none;
+    line-height: var(--line-height-tight);
+}
+
+.menu_link_label {
+    display: inline;
+}

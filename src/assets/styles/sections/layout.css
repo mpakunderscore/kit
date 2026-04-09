@@ -20,6 +20,15 @@
     gap: var(--space-3);
 }
 
+.section_grid_single {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+}
+
+.section_grid_single > .section_card {
+    width: min(var(--layout-header-max-width), 100%);
+}
+
 .section_card {
     display: grid;
     align-content: start;
@@ -29,7 +38,7 @@
     border: var(--border-width-sm) solid var(--color-accent-overlay);
     border-radius: var(--radius-md);
     background: var(--color-accent-overlay);
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-body);
 }
 
 .section_card_description {
@@ -40,7 +49,7 @@
 
 .section_field_row {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--space-2);
     align-items: start;
     align-self: start;
@@ -60,13 +69,14 @@
 }
 
 .section_field_value {
+    justify-self: stretch;
+    width: 100%;
+    min-width: 0;
     margin: 0;
-    max-width: 300px;
     overflow: hidden;
+    text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
-    justify-self: end;
-    text-align: right;
 }
 
 .section_field_value_ok {
