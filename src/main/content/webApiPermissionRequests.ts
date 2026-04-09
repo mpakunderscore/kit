@@ -267,12 +267,12 @@ const requestWebNfcPermission: PermissionRequestHandler = async () => {
 }
 
 const requestWebXrPermission: PermissionRequestHandler = async () => {
-    const xr = withNavigator((nav) => nav.xr)
-    const requestSession = xr?.requestSession
+    const xrNavigator = withNavigator((nav) => nav.xr)
+    const requestSession = xrNavigator?.requestSession
     if (requestSession === undefined) return 'unsupported'
 
     try {
-        await requestSession.call(xr, 'immersive-vr')
+        await requestSession.call(xrNavigator, 'immersive-vr')
         return 'granted'
     } catch {
         return 'denied'
@@ -337,9 +337,10 @@ const requestDeviceOrientationPermission: PermissionRequestHandler = async () =>
         return requestByPermissionsApi('accelerometer')
     }
 
-    const DeviceOrientationEventWithPermission = DeviceOrientationEvent as typeof DeviceOrientationEvent & {
-        readonly requestPermission?: () => Promise<'granted' | 'denied'>
-    }
+    const DeviceOrientationEventWithPermission =
+        DeviceOrientationEvent as typeof DeviceOrientationEvent & {
+            readonly requestPermission?: () => Promise<'granted' | 'denied'>
+        }
     if (typeof DeviceOrientationEventWithPermission.requestPermission !== 'function') {
         return requestByPermissionsApi('accelerometer')
     }

@@ -71,16 +71,11 @@ export const APP_SECTIONS: readonly AppSection[] = [
                 description: '',
                 fields: [],
             },
-            {
-                id: 'user_profile',
-                description: '',
-                fields: [],
-            },
         ],
     },
     {
-        id: 'web_api_section',
-        label: 'Web API',
+        id: 'web_api_permissions_section',
+        label: 'Permissions',
         blocks: [
             {
                 id: 'web_api_with_permissions',
@@ -91,6 +86,12 @@ export const APP_SECTIONS: readonly AppSection[] = [
                     'warn'
                 ),
             },
+        ],
+    },
+    {
+        id: 'web_api_availability_section',
+        label: 'Web API',
+        blocks: [
             {
                 id: 'web_api_without_permissions',
                 description: '',

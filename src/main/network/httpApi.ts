@@ -39,9 +39,7 @@ const isNetworkIpResponse = (value: unknown): value is NetworkIpResponse => {
 }
 
 const buildApiUrl = (path: string, searchParams?: Record<string, string>): string => {
-    const url = new URL(
-        `${window.location.protocol}//${window.location.hostname}:${PORT}${path}`
-    )
+    const url = new URL(`${window.location.protocol}//${window.location.hostname}:${PORT}${path}`)
     if (searchParams !== undefined) {
         for (const [key, value] of Object.entries(searchParams)) {
             url.searchParams.set(key, value)

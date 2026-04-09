@@ -7,9 +7,11 @@ type SectionProps = {
 
 export const Section = ({ section }: SectionProps) => {
     const { blocks, id } = section
+    const gridClassName = blocks.length === 1 ? 'section_grid section_grid_single' : 'section_grid'
+
     return (
         <section className={'section'} id={id}>
-            <div className={'section_grid'}>
+            <div className={gridClassName}>
                 {blocks.map((block) => {
                     return <Block block={block} key={id + '_' + block.id} />
                 })}

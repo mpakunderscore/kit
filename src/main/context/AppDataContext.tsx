@@ -12,6 +12,7 @@ import {
     type NetworkMetricsResponse,
     type UserResponse,
 } from '@src/main/network/httpApi'
+import { formatUiTime24h } from '@src/main/utils/formatUiTime24h'
 
 const NETWORK_NOT_AVAILABLE_VALUE = 'Not available'
 
@@ -63,8 +64,16 @@ const applyUserToSections = (
                         ...block,
                         fields: [
                             { id: 'uuid', label: 'UUID', value: user.uuid },
-                            { id: 'created_at', label: 'createdAt', value: user.createdAt },
-                            { id: 'updated_at', label: 'updatedAt', value: user.updatedAt },
+                            {
+                                id: 'created_at',
+                                label: 'createdAt',
+                                value: formatUiTime24h(user.createdAt),
+                            },
+                            {
+                                id: 'updated_at',
+                                label: 'updatedAt',
+                                value: formatUiTime24h(user.updatedAt),
+                            },
                         ],
                     }
                 }
