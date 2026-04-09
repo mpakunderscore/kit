@@ -5,16 +5,20 @@ import {
     type BrowserDataValues,
     collectBrowserDataValues,
 } from '@src/main/content/browserDataValues'
+import { PROJECT_INFO_KEYS, type ProjectDataKey } from '@src/main/content/projectDataKeys'
 import { APP_SECTIONS, type AppSection, type MenuSection } from '@src/main/content/sections'
 import {
     requestNetworkMetrics,
+    requestProjectInfo,
     requestUser,
     type NetworkMetricsResponse,
+    type ProjectInfoResponse,
     type UserResponse,
 } from '@src/main/network/httpApi'
 import { formatUiTime24h } from '@src/main/utils/formatUiTime24h'
 
 const NETWORK_NOT_AVAILABLE_VALUE = 'Not available'
+const PROJECT_NOT_AVAILABLE_VALUE = 'Not available'
 
 type NetworkFieldKey =
     | 'location.hostname'
@@ -22,6 +26,7 @@ type NetworkFieldKey =
     | 'navigator.connection.downlink'
 
 type NetworkSectionValues = Readonly<Record<NetworkFieldKey, string>>
+type ProjectSectionValues = Readonly<Record<ProjectDataKey, string>>
 
 const NETWORK_FIELD_KEYS: readonly NetworkFieldKey[] = [
     'location.hostname',
@@ -35,8 +40,24 @@ const NETWORK_FALLBACK_VALUES: NetworkSectionValues = {
     'navigator.connection.downlink': NETWORK_NOT_AVAILABLE_VALUE,
 }
 
+const PROJECT_FALLBACK_VALUES: ProjectSectionValues = {
+    'package.name': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.version': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.description': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.author': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.license': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.engines.node': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.scripts.count': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.dependencies.count': PROJECT_NOT_AVAILABLE_VALUE,
+    'package.devDependencies.count': PROJECT_NOT_AVAILABLE_VALUE,
+}
+
 const isNetworkFieldKey = (value: string): value is NetworkFieldKey => {
     return NETWORK_FIELD_KEYS.some((networkFieldKey) => networkFieldKey === value)
+}
+
+const isProjectFieldKey = (value: string): value is ProjectDataKey => {
+    return PROJECT_INFO_KEYS.some((projectDataKey) => projectDataKey.key === value)
 }
 
 const buildNetworkSectionValues = (
@@ -46,6 +67,20 @@ const buildNetworkSectionValues = (
         'location.hostname': networkMetrics.ip,
         'navigator.connection.rtt': `${networkMetrics.pingMs} ms`,
         'navigator.connection.downlink': `${networkMetrics.downlinkMbps} Mbps`,
+    }
+}
+
+const buildProjectSectionValues = (projectInfo: ProjectInfoResponse): ProjectSectionValues => {
+    return {
+        'package.name': projectInfo.name,
+        'package.version': projectInfo.version,
+        'package.description': projectInfo.description,
+        'package.author': projectInfo.author,
+        'package.license': projectInfo.license,
+        'package.engines.node': projectInfo.nodeVersion,
+        'package.scripts.count': String(projectInfo.scriptsCount),
+        'package.dependencies.count': String(projectInfo.dependenciesCount),
+        'package.devDependencies.count': String(projectInfo.devDependenciesCount),
     }
 }
 
@@ -143,6 +178,32 @@ const applyNetworkDataToSections = (
     })
 }
 
+const applyProjectDataToSections = (
+    appSections: readonly AppSection[],
+    projectDataValues: ProjectSectionValues
+): readonly AppSection[] => {
+    return appSections.map((section) => {
+        if (section.id !== 'project_section') return section
+
+        return {
+            ...section,
+            blocks: section.blocks.map((block) => ({
+                ...block,
+                fields: block.fields.map((field) => {
+                    if (field.keyTooltip === undefined || !isProjectFieldKey(field.keyTooltip)) {
+                        return field
+                    }
+
+                    return {
+                        ...field,
+                        value: projectDataValues[field.keyTooltip],
+                    }
+                }),
+            })),
+        }
+    })
+}
+
 type AppDataContextValue = {
     readonly appSections: readonly AppSection[]
     readonly menuSections: readonly MenuSection[]
@@ -202,9 +263,30 @@ export const AppDataProvider = ({ children }: AppDataProviderProps) => {
             }
         }
 
+        const loadProject = async () => {
+            try {
+                const projectInfo = await requestProjectInfo()
+                if (isDisposed) return
+
+                setAppSections((currentAppSections) =>
+                    applyProjectDataToSections(
+                        currentAppSections,
+                        buildProjectSectionValues(projectInfo)
+                    )
+                )
+            } catch {
+                if (isDisposed) return
+
+                setAppSections((currentAppSections) =>
+                    applyProjectDataToSections(currentAppSections, PROJECT_FALLBACK_VALUES)
+                )
+            }
+        }
+
         void loadBrowserData()
         void loadUser()
         void loadNetwork()
+        void loadProject()
 
         return () => {
             isDisposed = true

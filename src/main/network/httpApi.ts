@@ -10,6 +10,18 @@ export type NetworkMetricsResponse = {
     readonly downlinkMbps: number
 }
 
+export type ProjectInfoResponse = {
+    readonly name: string
+    readonly version: string
+    readonly description: string
+    readonly author: string
+    readonly license: string
+    readonly nodeVersion: string
+    readonly scriptsCount: number
+    readonly dependenciesCount: number
+    readonly devDependenciesCount: number
+}
+
 type NetworkIpResponse = {
     readonly ip: string
     readonly timestamp: string
@@ -36,6 +48,22 @@ const isNetworkIpResponse = (value: unknown): value is NetworkIpResponse => {
     if (!isRecord(value)) return false
 
     return typeof value.ip === 'string' && typeof value.timestamp === 'string'
+}
+
+const isProjectInfoResponse = (value: unknown): value is ProjectInfoResponse => {
+    if (!isRecord(value)) return false
+
+    return (
+        typeof value.name === 'string' &&
+        typeof value.version === 'string' &&
+        typeof value.description === 'string' &&
+        typeof value.author === 'string' &&
+        typeof value.license === 'string' &&
+        typeof value.nodeVersion === 'string' &&
+        typeof value.scriptsCount === 'number' &&
+        typeof value.dependenciesCount === 'number' &&
+        typeof value.devDependenciesCount === 'number'
+    )
 }
 
 const buildApiUrl = (path: string, searchParams?: Record<string, string>): string => {
@@ -151,4 +179,19 @@ export const requestNetworkMetrics = async (): Promise<NetworkMetricsResponse> =
         pingMs,
         downlinkMbps,
     }
+}
+
+export const requestProjectInfo = async (): Promise<ProjectInfoResponse> => {
+    const apiUrl = buildApiUrl('/api/project')
+    const response = await fetch(apiUrl)
+    if (!response.ok) {
+        throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
+    }
+
+    const payload: unknown = await response.json()
+    if (!isProjectInfoResponse(payload)) {
+        throw new Error('Invalid /api/project payload')
+    }
+
+    return payload
 }

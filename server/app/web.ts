@@ -1,3 +1,6 @@
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+
 import express, { type Express, type Request } from 'express'
 
 import type { AppStaticPaths } from '@server/app/paths'
@@ -14,15 +17,35 @@ type NetworkIpPayload = {
     readonly timestamp: string
 }
 
+type ProjectPayload = {
+    readonly name: string
+    readonly version: string
+    readonly description: string
+    readonly author: string
+    readonly license: string
+    readonly nodeVersion: string
+    readonly scriptsCount: number
+    readonly dependenciesCount: number
+    readonly devDependenciesCount: number
+}
+
+type PackageJson = Readonly<Record<string, unknown>>
+
 const DOWNLOAD_TEST_DEFAULT_BYTES = 5_000_000
 const DOWNLOAD_TEST_MIN_BYTES = 1_000_000
 const DOWNLOAD_TEST_MAX_BYTES = 20_000_000
+const PACKAGE_JSON_PATH = path.resolve(process.cwd(), 'package.json')
+const NOT_AVAILABLE_VALUE = 'Not available'
 
 const NETWORK_NO_CACHE_HEADERS = {
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
     Pragma: 'no-cache',
     Expires: '0',
 } as const
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+    return typeof value === 'object' && value !== null
+}
 
 const resolveUserPayload = async (): Promise<UserPayload> => {
     const existingUser = await prisma.user.findFirst({
@@ -91,6 +114,50 @@ const createDownloadPayload = (bytes: number): Buffer => {
     return Buffer.alloc(bytes, 120)
 }
 
+const resolveStringValue = (value: unknown): string => {
+    if (typeof value !== 'string') return NOT_AVAILABLE_VALUE
+    const normalizedValue = value.trim()
+    return normalizedValue === '' ? NOT_AVAILABLE_VALUE : normalizedValue
+}
+
+const resolveAuthorValue = (value: unknown): string => {
+    if (typeof value === 'string') return resolveStringValue(value)
+    if (!isRecord(value)) return NOT_AVAILABLE_VALUE
+    return resolveStringValue(value.name)
+}
+
+const resolveObjectSize = (value: unknown): number => {
+    if (!isRecord(value)) return 0
+    return Object.keys(value).length
+}
+
+const readPackageJson = async (): Promise<PackageJson> => {
+    const rawContent = await readFile(PACKAGE_JSON_PATH, 'utf8')
+    const parsedContent: unknown = JSON.parse(rawContent)
+    if (!isRecord(parsedContent)) {
+        throw new Error('Invalid package.json payload')
+    }
+    return parsedContent
+}
+
+const resolveProjectPayload = async (): Promise<ProjectPayload> => {
+    const packageJson = await readPackageJson()
+
+    return {
+        name: resolveStringValue(packageJson.name),
+        version: resolveStringValue(packageJson.version),
+        description: resolveStringValue(packageJson.description),
+        author: resolveAuthorValue(packageJson.author),
+        license: resolveStringValue(packageJson.license),
+        nodeVersion: isRecord(packageJson.engines)
+            ? resolveStringValue(packageJson.engines.node)
+            : NOT_AVAILABLE_VALUE,
+        scriptsCount: resolveObjectSize(packageJson.scripts),
+        dependenciesCount: resolveObjectSize(packageJson.dependencies),
+        devDependenciesCount: resolveObjectSize(packageJson.devDependencies),
+    }
+}
+
 export const registerWebRoutes = (app: Express, paths: AppStaticPaths): void => {
     app.get('/api/user', async (_request, response, next) => {
         try {
@@ -120,6 +187,15 @@ export const registerWebRoutes = (app: Express, paths: AppStaticPaths): void => 
             'Content-Encoding': 'identity',
         })
         response.status(200).end(createDownloadPayload(payloadSize))
+    })
+
+    app.get('/api/project', async (_request, response, next) => {
+        try {
+            const payload = await resolveProjectPayload()
+            response.json(payload)
+        } catch (error) {
+            next(error)
+        }
     })
 
     app.use('/', express.static(paths.distDir))
