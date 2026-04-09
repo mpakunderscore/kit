@@ -30,3 +30,5 @@ yarn-error.log*
 AGENTS.md
 /docs/
 /logs/
+/.idea/
+.DS_Store
