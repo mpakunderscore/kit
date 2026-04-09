@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
-import { Circle, Globe, Puzzle, Shield, User, Wifi } from 'lucide-react'
+import { Circle, Folder, Globe, Puzzle, Shield, User, Wifi } from 'lucide-react'
+
 import type { MenuSection } from '@src/main/content/sections'
 import { useNavigationContext } from '@src/main/context/NavigationContext'
 
@@ -13,6 +14,7 @@ const MENU_ICONS: Readonly<Record<string, LucideIcon>> = {
     web_api_availability_section: Puzzle,
     browser_section: Globe,
     network_section: Wifi,
+    project_section: Folder,
 }
 
 export const MenuItem = ({ section }: MenuItemProps) => {

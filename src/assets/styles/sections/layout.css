@@ -29,6 +29,25 @@
     width: min(var(--layout-header-max-width), 100%);
 }
 
+.section_first_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.section_mobile_logo_wrap {
+    display: none;
+}
+
+.section_mobile_logo {
+    display: block;
+    width: var(--icon-brand-size);
+    height: var(--icon-brand-size);
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
 .section_card {
     display: grid;
     align-content: start;

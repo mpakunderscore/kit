@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 
 import type { SectionBlock, SectionFieldTone } from '@src/main/content/sections'
 import { isWebApiAvailable } from '@src/main/content/webApiAvailabilityChecks'
+import { getWebApiDescription } from '@src/main/content/webApiDescriptions'
+import { getWebApiPermissionDescription } from '@src/main/content/webApiPermissionDescriptions'
 import {
     requestWebApiPermission,
     type WebApiPermissionRequestResult,
@@ -58,6 +60,9 @@ export const Block = ({ block }: BlockProps) => {
                             : isWebApiAvailabilityBlock
                               ? (availabilityTonesByFieldId[field.id] ?? field.tone)
                               : field.tone
+                        const fieldTitle = isWebApiPermissionBlock
+                            ? getWebApiPermissionDescription(field.label)
+                            : getWebApiDescription(field.label)
 
                         return isWebApiPermissionBlock ? (
                             <button
@@ -67,6 +72,7 @@ export const Block = ({ block }: BlockProps) => {
                                 onClick={() => {
                                     void requestPermissionForField(field.id, field.label)
                                 }}
+                                title={fieldTitle}
                                 type={'button'}
                             >
                                 {field.label}
@@ -77,6 +83,7 @@ export const Block = ({ block }: BlockProps) => {
                                 className={'section_api_inline_item'}
                                 data-tone={fieldTone}
                                 key={`${block.id}_${field.id}`}
+                                title={fieldTitle}
                             >
                                 {field.label}
                                 {fieldIndex < block.fields.length - 1 ? ',' : ''}

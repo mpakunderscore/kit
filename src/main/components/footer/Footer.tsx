@@ -1,4 +1,5 @@
 import { Code2, Rocket } from 'lucide-react'
+
 import { FOOTER_VALUES } from '@src/main/components/footer/footerValues'
 
 const ENV_ICONS = {
