@@ -84,7 +84,7 @@
         align-items: center;
         justify-content: center;
         width: 100%;
-        margin-top: calc(100dvw / 2 - var(--icon-brand-size) / 2);
+        margin-top: calc(100dvw / 4);
     }
 
     .section_card {
