@@ -9,6 +9,9 @@ import {
     type ProjectPayload,
     type UserPayload,
 } from '@src/shared/contracts/api'
+import { createLogger } from '@src/utils/logger'
+
+const log = createLogger({ scope: 'httpApi' })
 
 export type UserResponse = UserPayload
 
@@ -62,11 +65,20 @@ const fetchJson = async <TPayload>(
     const apiUrl = buildApiUrl(endpoint, searchParams)
     const response = await fetch(apiUrl, options)
     if (!response.ok) {
+        log.warn('Request failed', { endpoint, status: response.status, url: apiUrl })
         throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
     }
 
-    const payload: unknown = await response.json()
+    let payload: unknown
+    try {
+        payload = await response.json()
+    } catch (error: unknown) {
+        log.warn('Response JSON parse failed', { endpoint, url: apiUrl }, error)
+        throw error
+    }
+
     if (!guard(payload)) {
+        log.warn('Response payload failed validation', { endpoint })
         throw new Error(`Invalid ${endpoint} payload`)
     }
 
@@ -77,6 +89,7 @@ export const requestUser = async (): Promise<UserResponse> => {
     if (window.desktopApi !== undefined) {
         const desktopUserPayload = await window.desktopApi.getUser()
         if (!isUserPayload(desktopUserPayload)) {
+            log.warn('Invalid desktop user payload')
             throw new Error('Invalid desktop user payload')
         }
 
@@ -108,6 +121,11 @@ const requestPingSample = async (): Promise<number> => {
     const finishedAt = performance.now()
 
     if (!response.ok) {
+        log.warn('Ping request failed', {
+            endpoint: ApiEndpoint.NetworkPing,
+            status: response.status,
+            url: apiUrl,
+        })
         throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
     }
 
@@ -133,12 +151,18 @@ const requestDownlink = async (): Promise<number> => {
         cache: 'no-store',
     })
     if (!response.ok) {
+        log.warn('Download test request failed', {
+            endpoint: ApiEndpoint.NetworkDownload,
+            status: response.status,
+            url: apiUrl,
+        })
         throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
     }
 
     const payload = await response.arrayBuffer()
     const elapsedSeconds = (performance.now() - startedAt) / 1_000
     if (elapsedSeconds <= 0) {
+        log.warn('Invalid download timing', { endpoint: ApiEndpoint.NetworkDownload })
         throw new Error(
             `Invalid elapsed time for ${resolveApiEndpoint(ApiEndpoint.NetworkDownload)}`
         )
