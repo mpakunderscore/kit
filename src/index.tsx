@@ -25,5 +25,5 @@ createRoot(rootElement).render(
                 <App />
             </NavigationProvider>
         </AppDataProvider>
-    </StrictMode>,
+    </StrictMode>
 )
