@@ -32,3 +32,4 @@ AGENTS.md
 /logs/
 /.idea/
 .DS_Store
+/electron/generated/
