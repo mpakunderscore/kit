@@ -7,11 +7,11 @@ export const Header = () => {
     const { menuSections } = useAppDataContext()
     const { scrollToSection } = useNavigationContext()
     const texts = TEXTS.header
-    const firstSectionId = menuSections[0]?.id ?? ''
+    const firstSection = menuSections[0]
 
     const handleBrandClick = () => {
-        if (firstSectionId === '') return
-        scrollToSection(firstSectionId)
+        if (firstSection === undefined) return
+        scrollToSection(firstSection.id)
     }
 
     return (

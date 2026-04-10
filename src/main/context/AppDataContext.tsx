@@ -1,13 +1,4 @@
-import {
-    createContext,
-    type Dispatch,
-    type ReactNode,
-    type SetStateAction,
-    use,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react'
+import { createContext, type ReactNode, use, useEffect, useMemo, useState } from 'react'
 
 import { APP_SECTIONS, type AppSection, type MenuSection } from '@src/main/content/sections'
 import {
@@ -17,17 +8,6 @@ import {
     loadProjectSectionPatcher,
     loadUserSectionPatcher,
 } from '@src/main/context/appDataLoaders'
-
-const runSectionLoader = async (
-    loader: () => Promise<AppSectionsPatcher | undefined>,
-    isDisposed: () => boolean,
-    setAppSections: Dispatch<SetStateAction<readonly AppSection[]>>
-): Promise<void> => {
-    const patcher = await loader()
-    if (patcher === undefined || isDisposed()) return
-
-    setAppSections((currentAppSections) => patcher(currentAppSections))
-}
 
 type AppDataContextValue = {
     readonly appSections: readonly AppSection[]
@@ -46,12 +26,27 @@ export const AppDataProvider = ({ children }: AppDataProviderProps) => {
     useEffect(() => {
         let isDisposed = false
 
-        const getIsDisposed = (): boolean => isDisposed
+        void (async () => {
+            const [browserPatcher, userPatcher, networkPatcher, projectPatcher] = await Promise.all(
+                [
+                    loadBrowserSectionPatcher(),
+                    loadUserSectionPatcher(),
+                    loadNetworkSectionPatcher(),
+                    loadProjectSectionPatcher(),
+                ]
+            )
 
-        void runSectionLoader(loadBrowserSectionPatcher, getIsDisposed, setAppSections)
-        void runSectionLoader(loadUserSectionPatcher, getIsDisposed, setAppSections)
-        void runSectionLoader(loadNetworkSectionPatcher, getIsDisposed, setAppSections)
-        void runSectionLoader(loadProjectSectionPatcher, getIsDisposed, setAppSections)
+            if (isDisposed) return
+
+            const patchers: AppSectionsPatcher[] = [
+                browserPatcher,
+                userPatcher,
+                networkPatcher,
+                projectPatcher,
+            ].filter((patcher): patcher is AppSectionsPatcher => patcher !== undefined)
+
+            setAppSections((sections) => patchers.reduce((acc, patch) => patch(acc), sections))
+        })()
 
         return () => {
             isDisposed = true
