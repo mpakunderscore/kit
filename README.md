@@ -48,3 +48,25 @@ npm run dev:client
 Open `http://localhost:5173`.
 
 (If needed, check `.env` for `PORT` and `DATABASE_URL`.)
+
+## Electron (desktop runtime)
+
+Electron is set up as a desktop shell for the existing frontend.
+It does not start the current Express server inside Electron.
+
+- User identity in Electron is stored in local SQLite (`app_user` row in the app data folder).
+- Frontend receives user data through a secure preload bridge (`window.desktopApi`).
+- Project/network sections still depend on HTTP API and will show fallback values if no backend is running.
+
+### Electron dev
+
+```bash
+npm install
+npm run dev:electron
+```
+
+### Electron production build
+
+```bash
+npm run build:desktop
+```
