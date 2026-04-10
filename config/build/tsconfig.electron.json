@@ -1,8 +1,13 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "rootDir": "../../electron",
-        "outDir": "../../dist/electron",
+        "baseUrl": "../..",
+        "paths": {
+            "@src/*": ["src/*"],
+            "@electron/*": ["electron/*"]
+        },
+        "rootDir": "../..",
+        "outDir": "../../dist",
         "module": "CommonJS",
         "moduleResolution": "node",
         "noEmit": false,
@@ -12,5 +17,5 @@
         "skipLibCheck": true
     },
     "include": ["../../electron/**/*.ts"],
-    "exclude": ["../../node_modules", "../../dist", "../../server", "../../src"]
+    "exclude": ["../../node_modules", "../../dist", "../../server"]
 }
