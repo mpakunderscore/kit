@@ -1,6 +1,6 @@
 {
     "name": "kit.mpak.space",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "kit",
     "type": "module",
     "scripts": {
@@ -12,7 +12,7 @@
         "dev:client": "vite --config config/build/vite.client.config.ts",
         "lint": "npm run lint:format && npm run lint:js && npm run lint:css",
         "lint:format": "prettier --config config/lint/.prettierrc --write . --ignore-path config/lint/.prettierignore",
-        "lint:js": "eslint --config config/lint/eslint.config.mjs src server --fix",
+        "lint:js": "eslint --config config/lint/eslint.config.mjs src server --max-warnings 0 --fix",
         "lint:css": "npx stylelint \"src/**/*.css\" --fix --config config/lint/stylelint.config.cjs --ignore-path config/lint/.stylelintignore",
         "check": "npm run typecheck && npm run lint && npm run build",
         "typecheck": "tsc -p tsconfig.json --noEmit",

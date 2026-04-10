@@ -70,6 +70,18 @@ export default tseslint.config(
                     objectLiteralTypeAssertions: 'allow-as-parameter',
                 },
             ],
+            '@typescript-eslint/consistent-type-imports': 'error',
+            '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/no-misused-promises': [
+                'error',
+                {
+                    checksVoidReturn: {
+                        // Keep low-noise defaults for callback-heavy APIs (React handlers, Express middleware).
+                        arguments: false,
+                        attributes: false,
+                    },
+                },
+            ],
 
             'import/order': [
                 'error',
@@ -211,6 +223,13 @@ export default tseslint.config(
                     ignorePattern: '^(?:\\d|[-=]{3,}|eslint|ts-|@ts-|prettier)',
                 },
             ],
+            'no-warning-comments': [
+                'error',
+                {
+                    terms: ['todo', 'fixme', 'xxx'],
+                    location: 'start',
+                },
+            ],
 
             '@typescript-eslint/naming-convention': [
                 'error',
@@ -260,7 +279,7 @@ export default tseslint.config(
             ],
 
             '@typescript-eslint/no-unused-vars': [
-                'warn',
+                'error',
                 {
                     vars: 'all',
                     args: 'after-used',
@@ -275,7 +294,7 @@ export default tseslint.config(
             'new-cap': ['error', { newIsCap: true, capIsNew: false }],
 
             'unicorn/filename-case': [
-                'warn',
+                'error',
                 {
                     cases: { pascalCase: true, camelCase: true },
                     ignore: [/[A-Z]{2,}/],
@@ -283,7 +302,7 @@ export default tseslint.config(
             ],
 
             'no-restricted-syntax': [
-                'warn',
+                'error',
                 {
                     selector: 'JSXAttribute[name.name="className"] Literal[value=/(__|--)/]',
                     message: 'CSS classes must not contain "__" or "--". Use snake_case instead.',
@@ -293,7 +312,7 @@ export default tseslint.config(
     },
 
     // ---------------------------------------------------------------------------
-    // TypeScript sources: discourage console.* (warn for now in this repo).
+    // TypeScript sources: disallow console.* by default.
     // ---------------------------------------------------------------------------
     {
         files: ['**/*.{ts,tsx}'],
