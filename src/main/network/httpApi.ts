@@ -20,6 +20,13 @@ export type ProjectInfoResponse = {
     readonly scriptsCount: number
     readonly dependenciesCount: number
     readonly devDependenciesCount: number
+    readonly dependenciesLibraries: readonly ProjectLibraryResponse[]
+    readonly devDependenciesLibraries: readonly ProjectLibraryResponse[]
+}
+
+export type ProjectLibraryResponse = {
+    readonly name: string
+    readonly version: string
 }
 
 type NetworkIpResponse = {
@@ -50,6 +57,12 @@ const isNetworkIpResponse = (value: unknown): value is NetworkIpResponse => {
     return typeof value.ip === 'string' && typeof value.timestamp === 'string'
 }
 
+const isProjectLibraryResponse = (value: unknown): value is ProjectLibraryResponse => {
+    if (!isRecord(value)) return false
+
+    return typeof value.name === 'string' && typeof value.version === 'string'
+}
+
 const isProjectInfoResponse = (value: unknown): value is ProjectInfoResponse => {
     if (!isRecord(value)) return false
 
@@ -62,7 +75,11 @@ const isProjectInfoResponse = (value: unknown): value is ProjectInfoResponse => 
         typeof value.nodeVersion === 'string' &&
         typeof value.scriptsCount === 'number' &&
         typeof value.dependenciesCount === 'number' &&
-        typeof value.devDependenciesCount === 'number'
+        typeof value.devDependenciesCount === 'number' &&
+        Array.isArray(value.dependenciesLibraries) &&
+        value.dependenciesLibraries.every((library) => isProjectLibraryResponse(library)) &&
+        Array.isArray(value.devDependenciesLibraries) &&
+        value.devDependenciesLibraries.every((library) => isProjectLibraryResponse(library))
     )
 }
 

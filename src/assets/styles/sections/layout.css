@@ -29,6 +29,17 @@
     width: min(var(--layout-header-max-width), 100%);
 }
 
+.section_grid_project_left {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+}
+
+.section_grid_project_right {
+    display: grid;
+    align-content: start;
+}
+
 .section_first_content {
     display: flex;
     flex-direction: column;

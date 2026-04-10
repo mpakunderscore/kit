@@ -1,17 +1,23 @@
 import { createContext, type ReactNode, use, useEffect, useMemo, useState } from 'react'
 
-import type { BrowserDataKey } from '@src/main/content/browserDataKeys'
+import type { BrowserDataKey } from '@src/main/content/browser/browserDataKeys'
 import {
     type BrowserDataValues,
     collectBrowserDataValues,
-} from '@src/main/content/browserDataValues'
-import { PROJECT_INFO_KEYS, type ProjectDataKey } from '@src/main/content/projectDataKeys'
-import { APP_SECTIONS, type AppSection, type MenuSection } from '@src/main/content/sections'
+} from '@src/main/content/browser/browserDataValues'
+import { PROJECT_INFO_KEYS, type ProjectDataKey } from '@src/main/content/project/projectDataKeys'
+import {
+    APP_SECTIONS,
+    type AppSection,
+    type MenuSection,
+    type SectionField,
+} from '@src/main/content/sections'
 import {
     requestNetworkMetrics,
     requestProjectInfo,
     requestUser,
     type NetworkMetricsResponse,
+    type ProjectLibraryResponse,
     type ProjectInfoResponse,
     type UserResponse,
 } from '@src/main/network/httpApi'
@@ -52,6 +58,22 @@ const PROJECT_FALLBACK_VALUES: ProjectSectionValues = {
     'package.devDependencies.count': PROJECT_NOT_AVAILABLE_VALUE,
 }
 
+const PROJECT_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS: readonly SectionField[] = [
+    {
+        id: 'project_dependencies_libraries_not_available',
+        label: 'Dependencies',
+        value: PROJECT_NOT_AVAILABLE_VALUE,
+    },
+]
+
+const PROJECT_DEV_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS: readonly SectionField[] = [
+    {
+        id: 'project_dev_dependencies_libraries_not_available',
+        label: 'Dev Dependencies',
+        value: PROJECT_NOT_AVAILABLE_VALUE,
+    },
+]
+
 const isNetworkFieldKey = (value: string): value is NetworkFieldKey => {
     return NETWORK_FIELD_KEYS.some((networkFieldKey) => networkFieldKey === value)
 }
@@ -82,6 +104,19 @@ const buildProjectSectionValues = (projectInfo: ProjectInfoResponse): ProjectSec
         'package.dependencies.count': String(projectInfo.dependenciesCount),
         'package.devDependencies.count': String(projectInfo.devDependenciesCount),
     }
+}
+
+const buildProjectLibraryFields = (
+    libraries: readonly ProjectLibraryResponse[],
+    fallbackFields: readonly SectionField[]
+): readonly SectionField[] => {
+    if (libraries.length === 0) return fallbackFields
+
+    return libraries.map((library, index) => ({
+        id: `project_library_${index + 1}`,
+        label: library.name,
+        value: library.version,
+    }))
 }
 
 const applyUserToSections = (
@@ -180,26 +215,44 @@ const applyNetworkDataToSections = (
 
 const applyProjectDataToSections = (
     appSections: readonly AppSection[],
-    projectDataValues: ProjectSectionValues
+    projectDataValues: ProjectSectionValues,
+    projectDependenciesLibraryFields: readonly SectionField[],
+    projectDevDependenciesLibraryFields: readonly SectionField[]
 ): readonly AppSection[] => {
     return appSections.map((section) => {
         if (section.id !== 'project_section') return section
 
         return {
             ...section,
-            blocks: section.blocks.map((block) => ({
-                ...block,
-                fields: block.fields.map((field) => {
-                    if (field.keyTooltip === undefined || !isProjectFieldKey(field.keyTooltip)) {
-                        return field
-                    }
-
+            blocks: section.blocks.map((block) => {
+                if (block.id === 'project_dependencies_library_versions') {
                     return {
-                        ...field,
-                        value: projectDataValues[field.keyTooltip],
+                        ...block,
+                        fields: projectDependenciesLibraryFields,
                     }
-                }),
-            })),
+                }
+
+                if (block.id === 'project_dev_dependencies_library_versions') {
+                    return {
+                        ...block,
+                        fields: projectDevDependenciesLibraryFields,
+                    }
+                }
+
+                return {
+                    ...block,
+                    fields: block.fields.map((field) => {
+                        if (field.keyTooltip === undefined || !isProjectFieldKey(field.keyTooltip)) {
+                            return field
+                        }
+
+                        return {
+                            ...field,
+                            value: projectDataValues[field.keyTooltip],
+                        }
+                    }),
+                }
+            }),
         }
     })
 }
@@ -271,14 +324,27 @@ export const AppDataProvider = ({ children }: AppDataProviderProps) => {
                 setAppSections((currentAppSections) =>
                     applyProjectDataToSections(
                         currentAppSections,
-                        buildProjectSectionValues(projectInfo)
+                        buildProjectSectionValues(projectInfo),
+                        buildProjectLibraryFields(
+                            projectInfo.dependenciesLibraries,
+                            PROJECT_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS
+                        ),
+                        buildProjectLibraryFields(
+                            projectInfo.devDependenciesLibraries,
+                            PROJECT_DEV_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS
+                        )
                     )
                 )
             } catch {
                 if (isDisposed) return
 
                 setAppSections((currentAppSections) =>
-                    applyProjectDataToSections(currentAppSections, PROJECT_FALLBACK_VALUES)
+                    applyProjectDataToSections(
+                        currentAppSections,
+                        PROJECT_FALLBACK_VALUES,
+                        PROJECT_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS,
+                        PROJECT_DEV_DEPENDENCIES_LIBRARY_FALLBACK_FIELDS
+                    )
                 )
             }
         }

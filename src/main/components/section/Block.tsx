@@ -1,22 +1,25 @@
 import { useMemo, useState } from 'react'
 
 import type { SectionBlock, SectionFieldTone } from '@src/main/content/sections'
-import { isWebApiAvailable } from '@src/main/content/webApiAvailabilityChecks'
-import { getWebApiDescription } from '@src/main/content/webApiDescriptions'
-import { getWebApiPermissionDescription } from '@src/main/content/webApiPermissionDescriptions'
+import { getBrowserAllAvailableKeyDescription } from '@src/main/content/browser/browserAllAvailableKeyDescriptions'
+import { isWebApiAvailable } from '@src/main/content/webApi/webApiAvailabilityChecks'
+import { getWebApiDescription } from '@src/main/content/webApi/webApiDescriptions'
+import { getWebApiPermissionDescription } from '@src/main/content/webApi/webApiPermissionDescriptions'
 import {
     requestWebApiPermission,
     type WebApiPermissionRequestResult,
-} from '@src/main/content/webApiPermissionRequests'
+} from '@src/main/content/webApi/webApiPermissionRequests'
 
 type BlockProps = {
     readonly block: SectionBlock
 }
 
 export const Block = ({ block }: BlockProps) => {
-    const isWebApiPermissionBlock = block.id === 'web_api_with_permissions'
-    const isWebApiAvailabilityBlock = block.id === 'web_api_without_permissions'
+    const isWebApiPermissionBlock = block.id.startsWith('web_api_with_permissions')
+    const isWebApiAvailabilityBlock = block.id.startsWith('web_api_without_permissions')
+    const isBrowserInlineListBlock = block.id === 'browser_all_available_keys'
     const isWebApiInlineListBlock = isWebApiPermissionBlock || isWebApiAvailabilityBlock
+    const isInlineListBlock = isWebApiInlineListBlock || isBrowserInlineListBlock
     const [permissionTonesByFieldId, setPermissionTonesByFieldId] = useState<
         Readonly<Record<string, SectionFieldTone>>
     >({})
@@ -52,7 +55,7 @@ export const Block = ({ block }: BlockProps) => {
             {block.description.trim() !== '' ? (
                 <div className={'section_card_description'}>{block.description}</div>
             ) : null}
-            {isWebApiInlineListBlock ? (
+            {isInlineListBlock ? (
                 <div className={'section_api_inline_list'}>
                     {block.fields.map((field, fieldIndex) => {
                         const fieldTone = isWebApiPermissionBlock
@@ -62,7 +65,11 @@ export const Block = ({ block }: BlockProps) => {
                               : field.tone
                         const fieldTitle = isWebApiPermissionBlock
                             ? getWebApiPermissionDescription(field.label)
-                            : getWebApiDescription(field.label)
+                            : isWebApiAvailabilityBlock
+                              ? getWebApiDescription(field.label)
+                              : isBrowserInlineListBlock
+                                ? getBrowserAllAvailableKeyDescription(field.label)
+                                : field.label
 
                         return isWebApiPermissionBlock ? (
                             <button

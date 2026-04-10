@@ -27,6 +27,13 @@ type ProjectPayload = {
     readonly scriptsCount: number
     readonly dependenciesCount: number
     readonly devDependenciesCount: number
+    readonly dependenciesLibraries: readonly ProjectLibraryPayload[]
+    readonly devDependenciesLibraries: readonly ProjectLibraryPayload[]
+}
+
+type ProjectLibraryPayload = {
+    readonly name: string
+    readonly version: string
 }
 
 type PackageJson = Readonly<Record<string, unknown>>
@@ -131,6 +138,27 @@ const resolveObjectSize = (value: unknown): number => {
     return Object.keys(value).length
 }
 
+const resolvePackageLibraries = (source: unknown): readonly ProjectLibraryPayload[] => {
+    const librariesByName = new Map<string, string>()
+
+    if (!isRecord(source)) return []
+
+    for (const [name, version] of Object.entries(source)) {
+        if (typeof version !== 'string') continue
+
+        const normalizedName = name.trim()
+        const normalizedVersion = version.trim()
+        if (normalizedName === '' || normalizedVersion === '') continue
+        if (librariesByName.has(normalizedName)) continue
+
+        librariesByName.set(normalizedName, normalizedVersion)
+    }
+
+    return [...librariesByName.entries()]
+        .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+        .map(([name, version]) => ({ name, version }))
+}
+
 const readPackageJson = async (): Promise<PackageJson> => {
     const rawContent = await readFile(PACKAGE_JSON_PATH, 'utf8')
     const parsedContent: unknown = JSON.parse(rawContent)
@@ -155,6 +183,8 @@ const resolveProjectPayload = async (): Promise<ProjectPayload> => {
         scriptsCount: resolveObjectSize(packageJson.scripts),
         dependenciesCount: resolveObjectSize(packageJson.dependencies),
         devDependenciesCount: resolveObjectSize(packageJson.devDependencies),
+        dependenciesLibraries: resolvePackageLibraries(packageJson.dependencies),
+        devDependenciesLibraries: resolvePackageLibraries(packageJson.devDependencies),
     }
 }
 
