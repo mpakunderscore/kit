@@ -17,7 +17,7 @@
         "lint:css": "npx stylelint \"src/**/*.css\" --fix --config config/lint/stylelint.config.cjs --ignore-path config/lint/.stylelintignore",
         "check": "npm run typecheck && npm run lint && npm run build",
         "typecheck": "tsc -p tsconfig.json --noEmit",
-        "deps:updates": "npx npm-check-updates -u",
+        "deps:updates": "npx npm-check-updates -u --target latest",
         "prisma:server:generate": "prisma generate --config config/db/prisma.server.config.ts",
         "prisma:server:validate": "prisma validate --config config/db/prisma.server.config.ts",
         "prisma:server:migrate:dev": "prisma migrate dev --config config/db/prisma.server.config.ts",
@@ -53,7 +53,7 @@
         "dotenv": "^17.4.1",
         "express": "5.2.1",
         "lucide-react": "^1.8.0",
-        "prisma": "^6.19.3",
+        "prisma": "^7.7.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
         "ws": "^8.20.0"
@@ -102,7 +102,8 @@
         },
         "files": [
             "dist/electron/**",
-            "dist/client/**"
+            "dist/client/**",
+            "dist/src/shared/**/*.js"
         ],
         "mac": {
             "icon": "public/icons/icon.icns",
