@@ -78,10 +78,13 @@
 
     .section_mobile_logo_wrap {
         display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        align-items: center;
         justify-content: center;
         width: 100%;
-        padding-top: var(--space-3);
-        padding-inline: var(--space-3);
+        margin-top: calc(100dvw / 2 - var(--icon-brand-size) / 2);
     }
 
     .section_card {

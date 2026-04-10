@@ -1,0 +1,18 @@
+.desktop .header {
+    -webkit-app-region: drag;
+}
+
+.desktop .header_brand {
+    display: none;
+}
+
+.desktop .header_brand,
+.desktop .menu_link {
+    -webkit-app-region: no-drag;
+}
+
+.section {
+    height: auto;
+    min-height: 100dvh;
+    padding-block: var(--space-3);
+}

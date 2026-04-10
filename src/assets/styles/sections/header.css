@@ -43,6 +43,7 @@
     margin-left: auto;
     padding: 0;
     gap: var(--space-1);
+    user-select: none;
 }
 
 .menu_link {
