@@ -10,6 +10,31 @@ type BrowserConnection = {
     readonly type?: string
 }
 
+type BrowserStorageEstimate = {
+    readonly quota?: number
+    readonly usage?: number
+}
+
+type NavigatorWithBrowserData = Navigator & {
+    readonly connection?: BrowserConnection
+    readonly deviceMemory?: number
+    readonly pdfViewerEnabled?: boolean
+    readonly storage?: {
+        estimate?: () => Promise<BrowserStorageEstimate>
+    }
+}
+
+type BrowserDataContext = {
+    readonly nav: NavigatorWithBrowserData
+    readonly storageQuota: unknown
+    readonly storageUsage: unknown
+}
+
+type BrowserDataDescriptor = {
+    readonly key: BrowserDataKey
+    readonly read: (context: BrowserDataContext) => unknown
+}
+
 export type BrowserDataValues = Readonly<Record<BrowserDataKey, string>>
 
 const formatBrowserDataValue = (value: unknown): string => {
@@ -49,46 +74,167 @@ const safeRead = (reader: () => unknown): unknown => {
     }
 }
 
+const BROWSER_DATA_DESCRIPTORS: readonly BrowserDataDescriptor[] = [
+    {
+        key: 'navigator.language',
+        read: () => navigator.language,
+    },
+    {
+        key: 'navigator.languages',
+        read: () => navigator.languages,
+    },
+    {
+        key: 'navigator.userAgent',
+        read: () => navigator.userAgent,
+    },
+    {
+        key: 'navigator.platform',
+        read: () => navigator.platform,
+    },
+    {
+        key: 'navigator.vendor',
+        read: () => navigator.vendor,
+    },
+    {
+        key: 'navigator.cookieEnabled',
+        read: () => navigator.cookieEnabled,
+    },
+    {
+        key: 'navigator.hardwareConcurrency',
+        read: () => navigator.hardwareConcurrency,
+    },
+    {
+        key: 'navigator.maxTouchPoints',
+        read: () => navigator.maxTouchPoints,
+    },
+    {
+        key: 'navigator.deviceMemory',
+        read: (context) => context.nav.deviceMemory,
+    },
+    {
+        key: 'navigator.doNotTrack',
+        read: () => navigator.doNotTrack,
+    },
+    {
+        key: 'navigator.webdriver',
+        read: () => navigator.webdriver,
+    },
+    {
+        key: 'navigator.pdfViewerEnabled',
+        read: (context) => context.nav.pdfViewerEnabled,
+    },
+    {
+        key: 'Intl.DateTimeFormat().resolvedOptions().timeZone',
+        read: () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+    },
+    {
+        key: 'window.devicePixelRatio',
+        read: () => window.devicePixelRatio,
+    },
+    {
+        key: 'screen.width',
+        read: () => screen.width,
+    },
+    {
+        key: 'screen.height',
+        read: () => screen.height,
+    },
+    {
+        key: 'screen.availWidth',
+        read: () => screen.availWidth,
+    },
+    {
+        key: 'screen.availHeight',
+        read: () => screen.availHeight,
+    },
+    {
+        key: 'screen.colorDepth',
+        read: () => screen.colorDepth,
+    },
+    {
+        key: 'screen.pixelDepth',
+        read: () => screen.pixelDepth,
+    },
+    {
+        key: 'document.characterSet',
+        read: () => document.characterSet,
+    },
+    {
+        key: 'location.hostname',
+        read: () => location.hostname,
+    },
+    {
+        key: 'window.innerWidth',
+        read: () => window.innerWidth,
+    },
+    {
+        key: 'window.innerHeight',
+        read: () => window.innerHeight,
+    },
+    {
+        key: 'location.href',
+        read: () => location.href,
+    },
+    {
+        key: 'location.origin',
+        read: () => location.origin,
+    },
+    {
+        key: 'location.pathname',
+        read: () => location.pathname,
+    },
+    {
+        key: 'document.referrer',
+        read: () => document.referrer,
+    },
+    {
+        key: 'document.visibilityState',
+        read: () => document.visibilityState,
+    },
+    {
+        key: 'document.readyState',
+        read: () => document.readyState,
+    },
+    {
+        key: 'history.length',
+        read: () => history.length,
+    },
+    {
+        key: 'performance.timeOrigin',
+        read: () => performance.timeOrigin,
+    },
+    {
+        key: 'performance.now',
+        read: () => Number(performance.now().toFixed(2)),
+    },
+    {
+        key: 'navigator.connection.rtt',
+        read: (context) => context.nav.connection?.rtt,
+    },
+    {
+        key: 'navigator.connection.downlink',
+        read: (context) => context.nav.connection?.downlink,
+    },
+    {
+        key: 'navigator.storage.estimate().usage',
+        read: (context) => context.storageUsage,
+    },
+    {
+        key: 'navigator.storage.estimate().quota',
+        read: (context) => context.storageQuota,
+    },
+]
+
+const buildBrowserDataValues = (
+    resolver: (descriptor: BrowserDataDescriptor) => string
+): BrowserDataValues => {
+    return Object.fromEntries(
+        BROWSER_DATA_DESCRIPTORS.map((descriptor) => [descriptor.key, resolver(descriptor)])
+    ) as BrowserDataValues
+}
+
 const createFallbackValues = (): BrowserDataValues => {
-    return {
-        'navigator.language': NOT_AVAILABLE_VALUE,
-        'navigator.languages': NOT_AVAILABLE_VALUE,
-        'navigator.userAgent': NOT_AVAILABLE_VALUE,
-        'navigator.platform': NOT_AVAILABLE_VALUE,
-        'navigator.vendor': NOT_AVAILABLE_VALUE,
-        'navigator.cookieEnabled': NOT_AVAILABLE_VALUE,
-        'navigator.hardwareConcurrency': NOT_AVAILABLE_VALUE,
-        'navigator.maxTouchPoints': NOT_AVAILABLE_VALUE,
-        'navigator.deviceMemory': NOT_AVAILABLE_VALUE,
-        'navigator.doNotTrack': NOT_AVAILABLE_VALUE,
-        'navigator.webdriver': NOT_AVAILABLE_VALUE,
-        'navigator.pdfViewerEnabled': NOT_AVAILABLE_VALUE,
-        'Intl.DateTimeFormat().resolvedOptions().timeZone': NOT_AVAILABLE_VALUE,
-        'window.devicePixelRatio': NOT_AVAILABLE_VALUE,
-        'screen.width': NOT_AVAILABLE_VALUE,
-        'screen.height': NOT_AVAILABLE_VALUE,
-        'screen.availWidth': NOT_AVAILABLE_VALUE,
-        'screen.availHeight': NOT_AVAILABLE_VALUE,
-        'screen.colorDepth': NOT_AVAILABLE_VALUE,
-        'screen.pixelDepth': NOT_AVAILABLE_VALUE,
-        'document.characterSet': NOT_AVAILABLE_VALUE,
-        'location.hostname': NOT_AVAILABLE_VALUE,
-        'window.innerWidth': NOT_AVAILABLE_VALUE,
-        'window.innerHeight': NOT_AVAILABLE_VALUE,
-        'location.href': NOT_AVAILABLE_VALUE,
-        'location.origin': NOT_AVAILABLE_VALUE,
-        'location.pathname': NOT_AVAILABLE_VALUE,
-        'document.referrer': NOT_AVAILABLE_VALUE,
-        'document.visibilityState': NOT_AVAILABLE_VALUE,
-        'document.readyState': NOT_AVAILABLE_VALUE,
-        'history.length': NOT_AVAILABLE_VALUE,
-        'performance.timeOrigin': NOT_AVAILABLE_VALUE,
-        'performance.now': NOT_AVAILABLE_VALUE,
-        'navigator.connection.rtt': NOT_AVAILABLE_VALUE,
-        'navigator.connection.downlink': NOT_AVAILABLE_VALUE,
-        'navigator.storage.estimate().usage': NOT_AVAILABLE_VALUE,
-        'navigator.storage.estimate().quota': NOT_AVAILABLE_VALUE,
-    }
+    return buildBrowserDataValues(() => NOT_AVAILABLE_VALUE)
 }
 
 export const collectBrowserDataValues = async (): Promise<BrowserDataValues> => {
@@ -96,17 +242,7 @@ export const collectBrowserDataValues = async (): Promise<BrowserDataValues> => 
         return createFallbackValues()
     }
 
-    const nav = navigator as Navigator & {
-        readonly connection?: BrowserConnection
-        readonly deviceMemory?: number
-        readonly pdfViewerEnabled?: boolean
-        readonly storage?: {
-            estimate?: () => Promise<{
-                usage?: number
-                quota?: number
-            }>
-        }
-    }
+    const nav = navigator as NavigatorWithBrowserData
 
     let storageUsage: unknown
     let storageQuota: unknown
@@ -119,55 +255,13 @@ export const collectBrowserDataValues = async (): Promise<BrowserDataValues> => 
         storageQuota = undefined
     }
 
-    return {
-        'navigator.language': formatBrowserDataValue(safeRead(() => navigator.language)),
-        'navigator.languages': formatBrowserDataValue(safeRead(() => navigator.languages)),
-        'navigator.userAgent': formatBrowserDataValue(safeRead(() => navigator.userAgent)),
-        'navigator.platform': formatBrowserDataValue(safeRead(() => navigator.platform)),
-        'navigator.vendor': formatBrowserDataValue(safeRead(() => navigator.vendor)),
-        'navigator.cookieEnabled': formatBrowserDataValue(safeRead(() => navigator.cookieEnabled)),
-        'navigator.hardwareConcurrency': formatBrowserDataValue(
-            safeRead(() => navigator.hardwareConcurrency)
-        ),
-        'navigator.maxTouchPoints': formatBrowserDataValue(
-            safeRead(() => navigator.maxTouchPoints)
-        ),
-        'navigator.deviceMemory': formatBrowserDataValue(safeRead(() => nav.deviceMemory)),
-        'navigator.doNotTrack': formatBrowserDataValue(safeRead(() => navigator.doNotTrack)),
-        'navigator.webdriver': formatBrowserDataValue(safeRead(() => navigator.webdriver)),
-        'navigator.pdfViewerEnabled': formatBrowserDataValue(safeRead(() => nav.pdfViewerEnabled)),
-        'Intl.DateTimeFormat().resolvedOptions().timeZone': formatBrowserDataValue(
-            safeRead(() => Intl.DateTimeFormat().resolvedOptions().timeZone)
-        ),
-        'window.devicePixelRatio': formatBrowserDataValue(safeRead(() => window.devicePixelRatio)),
-        'screen.width': formatBrowserDataValue(safeRead(() => screen.width)),
-        'screen.height': formatBrowserDataValue(safeRead(() => screen.height)),
-        'screen.availWidth': formatBrowserDataValue(safeRead(() => screen.availWidth)),
-        'screen.availHeight': formatBrowserDataValue(safeRead(() => screen.availHeight)),
-        'screen.colorDepth': formatBrowserDataValue(safeRead(() => screen.colorDepth)),
-        'screen.pixelDepth': formatBrowserDataValue(safeRead(() => screen.pixelDepth)),
-        'document.characterSet': formatBrowserDataValue(safeRead(() => document.characterSet)),
-        'location.hostname': formatBrowserDataValue(safeRead(() => location.hostname)),
-        'window.innerWidth': formatBrowserDataValue(safeRead(() => window.innerWidth)),
-        'window.innerHeight': formatBrowserDataValue(safeRead(() => window.innerHeight)),
-        'location.href': formatBrowserDataValue(safeRead(() => location.href)),
-        'location.origin': formatBrowserDataValue(safeRead(() => location.origin)),
-        'location.pathname': formatBrowserDataValue(safeRead(() => location.pathname)),
-        'document.referrer': formatBrowserDataValue(safeRead(() => document.referrer)),
-        'document.visibilityState': formatBrowserDataValue(
-            safeRead(() => document.visibilityState)
-        ),
-        'document.readyState': formatBrowserDataValue(safeRead(() => document.readyState)),
-        'history.length': formatBrowserDataValue(safeRead(() => history.length)),
-        'performance.timeOrigin': formatBrowserDataValue(safeRead(() => performance.timeOrigin)),
-        'performance.now': formatBrowserDataValue(
-            safeRead(() => Number(performance.now().toFixed(2)))
-        ),
-        'navigator.connection.rtt': formatBrowserDataValue(safeRead(() => nav.connection?.rtt)),
-        'navigator.connection.downlink': formatBrowserDataValue(
-            safeRead(() => nav.connection?.downlink)
-        ),
-        'navigator.storage.estimate().usage': formatBrowserDataValue(storageUsage),
-        'navigator.storage.estimate().quota': formatBrowserDataValue(storageQuota),
+    const context: BrowserDataContext = {
+        nav,
+        storageUsage,
+        storageQuota,
     }
+
+    return buildBrowserDataValues((descriptor) => {
+        return formatBrowserDataValue(safeRead(() => descriptor.read(context)))
+    })
 }

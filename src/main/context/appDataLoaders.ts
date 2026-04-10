@@ -1,11 +1,6 @@
 import { collectBrowserDataValues } from '@src/main/content/browser/browserDataValues'
 import type { AppSection } from '@src/main/content/sections'
 import {
-    requestNetworkMetrics,
-    requestProjectInfo,
-    requestUser,
-} from '@src/main/network/httpApi'
-import {
     applyBrowserDataToSections,
     applyNetworkFallbackToSections,
     applyNetworkMetricsToSections,
@@ -13,10 +8,9 @@ import {
     applyProjectInfoToSections,
     applyUserToSections,
 } from '@src/main/context/appDataPatchers'
+import { requestNetworkMetrics, requestProjectInfo, requestUser } from '@src/main/network/httpApi'
 
-export type AppSectionsPatcher = (
-    appSections: readonly AppSection[]
-) => readonly AppSection[]
+export type AppSectionsPatcher = (appSections: readonly AppSection[]) => readonly AppSection[]
 
 export const loadBrowserSectionPatcher = async (): Promise<AppSectionsPatcher> => {
     const browserDataValues = await collectBrowserDataValues()

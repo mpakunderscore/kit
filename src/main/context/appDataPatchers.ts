@@ -1,8 +1,8 @@
 import type { BrowserDataKey } from '@src/main/content/browser/browserDataKeys'
 import type { BrowserDataValues } from '@src/main/content/browser/browserDataValues'
 import { PROJECT_INFO_KEYS, type ProjectDataKey } from '@src/main/content/project/projectDataKeys'
-import type { AppSection, SectionField } from '@src/main/content/sections'
 import { BlockId, SectionId } from '@src/main/content/sectionIds'
+import type { AppSection, SectionField } from '@src/main/content/sections'
 import type {
     NetworkMetricsResponse,
     ProjectLibraryResponse,
@@ -220,7 +220,10 @@ const applyProjectDataToSections = (
                 return {
                     ...block,
                     fields: block.fields.map((field) => {
-                        if (field.keyTooltip === undefined || !isProjectFieldKey(field.keyTooltip)) {
+                        if (
+                            field.keyTooltip === undefined ||
+                            !isProjectFieldKey(field.keyTooltip)
+                        ) {
                             return field
                         }
 
