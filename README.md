@@ -75,12 +75,12 @@ For native bundles that are not served over `http:`/`https:`, set **`VITE_API_BA
 
 These are the only Capacitor-related shortcuts in `package.json`:
 
-| Script | What it runs |
-| ------ | ------------ |
-| `npm run cap:copy:ios` | `cap copy ios` — copy the web build into the iOS project (no full `sync`). |
-| `npm run cap:copy:android` | `cap copy android` — same for Android. |
-| `npm run cap:sync:ios` | `build:client` then `cap sync ios` — web build + sync for iOS. |
-| `npm run cap:sync:android` | `build:client` then `cap sync android` — web build + sync for Android. |
+| Script                     | What it runs                                                               |
+| -------------------------- | -------------------------------------------------------------------------- |
+| `npm run cap:copy:ios`     | `cap copy ios` — copy the web build into the iOS project (no full `sync`). |
+| `npm run cap:copy:android` | `cap copy android` — same for Android.                                     |
+| `npm run cap:sync:ios`     | `build:client` then `cap sync ios` — web build + sync for iOS.             |
+| `npm run cap:sync:android` | `build:client` then `cap sync android` — web build + sync for Android.     |
 
 Use `npx cap` for everything else (see below).
 
@@ -88,31 +88,29 @@ Use `npx cap` for everything else (see below).
 
 The following [Capacitor CLI](https://capacitorjs.com/docs/cli/commands) commands used to have `npm run cap:…` aliases but were removed from `package.json`. Run them from the repo root after `npm install` (local CLI: `npx cap …` or `./node_modules/.bin/cap …`):
 
-| CLI command | Purpose |
-| ----------- | ------- |
-| `npx cap add ios` / `npx cap add android` | Create the native `ios/` or `android/` project (one-time scaffolding). |
-| `npx cap sync` | Copy web assets and update native plugin dependencies for **both** platforms (without running `build:client` unless you do it yourself). |
-| `npx cap copy` | Copy the web build to **both** native projects (no platform suffix). |
-| `npx cap update` | Refresh native dependencies to match `package.json` (does not copy the web bundle). |
-| `npx cap open ios` / `npx cap open android` | Open **Xcode** or **Android Studio** for the project. |
-| `npx cap run ios` / `npx cap run android` | Sync (by default), build, and deploy to a simulator or device; supports flags such as `--live-reload` (see `npx cap run --help`). |
-| `npx cap build ios` / `npx cap build android` | Produce a release build via the native toolchains (signing options in `npx cap build --help`). |
-| `npx cap doctor` | Environment and setup diagnostics. |
-| `npx cap ls` | List installed Capacitor/Cordova plugins. |
-| `npx cap migrate` | Migrate the project across major Capacitor versions when upgrading. |
+| CLI command                                   | Purpose                                                                                                                                  |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `npx cap add ios` / `npx cap add android`     | Create the native `ios/` or `android/` project (one-time scaffolding).                                                                   |
+| `npx cap sync`                                | Copy web assets and update native plugin dependencies for **both** platforms (without running `build:client` unless you do it yourself). |
+| `npx cap copy`                                | Copy the web build to **both** native projects (no platform suffix).                                                                     |
+| `npx cap update`                              | Refresh native dependencies to match `package.json` (does not copy the web bundle).                                                      |
+| `npx cap open ios` / `npx cap open android`   | Open **Xcode** or **Android Studio** for the project.                                                                                    |
+| `npx cap run ios` / `npx cap run android`     | Sync (by default), build, and deploy to a simulator or device; supports flags such as `--live-reload` (see `npx cap run --help`).        |
+| `npx cap build ios` / `npx cap build android` | Produce a release build via the native toolchains (signing options in `npx cap build --help`).                                           |
+| `npx cap doctor`                              | Environment and setup diagnostics.                                                                                                       |
+| `npx cap ls`                                  | List installed Capacitor/Cordova plugins.                                                                                                |
+| `npx cap migrate`                             | Migrate the project across major Capacitor versions when upgrading.                                                                      |
 
 For a full list: `npx cap --help`.
 
 ## Commands
 
-| Command                   | Description                                      |
-| ------------------------- | ------------------------------------------------ |
-| `npm run build`           | Build server and client                          |
-| `npm run check`           | Typecheck, lint, full build                      |
-| `npm run prisma:server:*` | Prisma CLI for the server database               |
-| `npm run prisma:app:*`    | Prisma CLI for the local app database (Electron) |
+| Command                   | Description                                                                |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `npm run build`           | Build server and client                                                    |
+| `npm run check`           | Typecheck, lint, full build                                                |
+| `npm run prisma:server:*` | Prisma CLI for the server database                                         |
+| `npm run prisma:app:*`    | Prisma CLI for the local app database (Electron)                           |
 | `npm run cap:*`           | Shortcuts for Capacitor copy/sync per platform; see **Mobile (Capacitor)** |
 
 ---
-
-_npm package name may remain `kit.mpak.space`; the desktop app title is **KIT** (`productName` in `package.json`)._
