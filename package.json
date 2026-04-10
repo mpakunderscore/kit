@@ -1,6 +1,6 @@
 {
     "name": "kit",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "kit",
     "main": "dist/electron/main.js",
     "type": "module",
@@ -24,6 +24,10 @@
         "prisma:server:migrate:deploy": "prisma migrate deploy --config config/db/prisma.server.config.ts",
         "prisma:server:db:push": "prisma db push --config config/db/prisma.server.config.ts",
         "prisma:server:studio": "prisma studio --config config/db/prisma.server.config.ts",
+        "cap:copy:android": "cap copy android",
+        "cap:copy:ios": "cap copy ios",
+        "cap:sync:android": "npm run build:client && cap sync android",
+        "cap:sync:ios": "npm run build:client && cap sync ios",
         "electron:build:ts": "tsc -p config/build/tsconfig.electron.json && node config/build/writeElectronPackageJson.cjs",
         "electron:build:desktop": "npm run electron:build:ts && npm run electron:rebuild && electron-builder",
         "electron:dev": "npm run electron:build:ts && npm run electron:rebuild && npm run electron:dev:run",
@@ -39,6 +43,9 @@
     "author": "mpakunderscore",
     "license": "ISC",
     "dependencies": {
+        "@capacitor/android": "^8.3.0",
+        "@capacitor/core": "^8.3.0",
+        "@capacitor/ios": "^8.3.0",
         "@prisma/adapter-better-sqlite3": "^7.7.0",
         "@prisma/client": "^7.7.0",
         "better-sqlite3": "^12.8.0",
@@ -46,12 +53,13 @@
         "dotenv": "^17.4.1",
         "express": "5.2.1",
         "lucide-react": "^1.8.0",
-        "prisma": "^7.7.0",
+        "prisma": "^6.19.3",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
         "ws": "^8.20.0"
     },
     "devDependencies": {
+        "@capacitor/cli": "^8.3.0",
         "@electron/rebuild": "^4.0.3",
         "@eslint-react/eslint-plugin": "^4.2.3",
         "@types/better-sqlite3": "^7.6.13",
