@@ -2,7 +2,7 @@ export enum ApiEndpoint {
     User = '/api/user',
     NetworkIp = '/api/network/ip',
     NetworkPing = '/api/network/ping',
-    NetworkDownloadTest = '/api/network/download-test',
+    NetworkDownload = '/api/network/download',
     Project = '/api/project',
 }
 

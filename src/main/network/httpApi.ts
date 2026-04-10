@@ -1,8 +1,14 @@
-export type UserResponse = {
-    readonly uuid: string
-    readonly createdAt: string
-    readonly updatedAt: string
-}
+import {
+    ApiEndpoint,
+    isNetworkIpPayload,
+    isProjectPayload,
+    isUserPayload,
+    type ProjectLibraryPayload,
+    type ProjectPayload,
+    type UserPayload,
+} from '@src/shared/contracts/api'
+
+export type UserResponse = UserPayload
 
 export type NetworkMetricsResponse = {
     readonly ip: string
@@ -10,81 +16,17 @@ export type NetworkMetricsResponse = {
     readonly downlinkMbps: number
 }
 
-export type ProjectInfoResponse = {
-    readonly name: string
-    readonly version: string
-    readonly description: string
-    readonly author: string
-    readonly license: string
-    readonly nodeVersion: string
-    readonly scriptsCount: number
-    readonly dependenciesCount: number
-    readonly devDependenciesCount: number
-    readonly dependenciesLibraries: readonly ProjectLibraryResponse[]
-    readonly devDependenciesLibraries: readonly ProjectLibraryResponse[]
-}
+export type ProjectInfoResponse = ProjectPayload
 
-export type ProjectLibraryResponse = {
-    readonly name: string
-    readonly version: string
-}
-
-type NetworkIpResponse = {
-    readonly ip: string
-    readonly timestamp: string
-}
+export type ProjectLibraryResponse = ProjectLibraryPayload
 
 const PING_SAMPLE_COUNT = 3
 const DOWNLOAD_TEST_BYTES = 5_000_000
 
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-    return typeof value === 'object' && value !== null
-}
-
-const isUserResponse = (value: unknown): value is UserResponse => {
-    if (!isRecord(value)) return false
-
-    return (
-        typeof value.uuid === 'string' &&
-        typeof value.createdAt === 'string' &&
-        typeof value.updatedAt === 'string'
+const buildApiUrl = (endpoint: ApiEndpoint, searchParams?: Record<string, string>): string => {
+    const url = new URL(
+        `${window.location.protocol}//${window.location.hostname}:${PORT}${endpoint}`
     )
-}
-
-const isNetworkIpResponse = (value: unknown): value is NetworkIpResponse => {
-    if (!isRecord(value)) return false
-
-    return typeof value.ip === 'string' && typeof value.timestamp === 'string'
-}
-
-const isProjectLibraryResponse = (value: unknown): value is ProjectLibraryResponse => {
-    if (!isRecord(value)) return false
-
-    return typeof value.name === 'string' && typeof value.version === 'string'
-}
-
-const isProjectInfoResponse = (value: unknown): value is ProjectInfoResponse => {
-    if (!isRecord(value)) return false
-
-    return (
-        typeof value.name === 'string' &&
-        typeof value.version === 'string' &&
-        typeof value.description === 'string' &&
-        typeof value.author === 'string' &&
-        typeof value.license === 'string' &&
-        typeof value.nodeVersion === 'string' &&
-        typeof value.scriptsCount === 'number' &&
-        typeof value.dependenciesCount === 'number' &&
-        typeof value.devDependenciesCount === 'number' &&
-        Array.isArray(value.dependenciesLibraries) &&
-        value.dependenciesLibraries.every((library) => isProjectLibraryResponse(library)) &&
-        Array.isArray(value.devDependenciesLibraries) &&
-        value.devDependenciesLibraries.every((library) => isProjectLibraryResponse(library))
-    )
-}
-
-const buildApiUrl = (path: string, searchParams?: Record<string, string>): string => {
-    const url = new URL(`${window.location.protocol}//${window.location.hostname}:${PORT}${path}`)
     if (searchParams !== undefined) {
         for (const [key, value] of Object.entries(searchParams)) {
             url.searchParams.set(key, value)
@@ -107,40 +49,45 @@ const resolveMedian = (values: readonly number[]): number => {
     return sorted[middleIndex]
 }
 
-export const requestUser = async (): Promise<UserResponse> => {
-    const apiUrl = buildApiUrl('/api/user')
-    const response = await fetch(apiUrl)
+const fetchJson = async <TPayload>(
+    endpoint: ApiEndpoint,
+    guard: (value: unknown) => value is TPayload,
+    options?: RequestInit,
+    searchParams?: Record<string, string>
+): Promise<TPayload> => {
+    const apiUrl = buildApiUrl(endpoint, searchParams)
+    const response = await fetch(apiUrl, options)
     if (!response.ok) {
         throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
     }
 
     const payload: unknown = await response.json()
-    if (!isUserResponse(payload)) {
-        throw new Error('Invalid /api/user payload')
+    if (!guard(payload)) {
+        throw new Error(`Invalid ${endpoint} payload`)
     }
 
     return payload
 }
 
-const requestNetworkIp = async (): Promise<string> => {
-    const apiUrl = buildApiUrl('/api/network/ip', { nonce: createRequestNonce() })
-    const response = await fetch(apiUrl, {
-        cache: 'no-store',
-    })
-    if (!response.ok) {
-        throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
-    }
+export const requestUser = async (): Promise<UserResponse> => {
+    return fetchJson(ApiEndpoint.User, isUserPayload)
+}
 
-    const payload: unknown = await response.json()
-    if (!isNetworkIpResponse(payload)) {
-        throw new Error('Invalid /api/network/ip payload')
-    }
+const requestNetworkIp = async (): Promise<string> => {
+    const payload = await fetchJson(
+        ApiEndpoint.NetworkIp,
+        isNetworkIpPayload,
+        {
+            cache: 'no-store',
+        },
+        { nonce: createRequestNonce() }
+    )
 
     return payload.ip
 }
 
 const requestPingSample = async (): Promise<number> => {
-    const apiUrl = buildApiUrl('/api/network/ping', { nonce: createRequestNonce() })
+    const apiUrl = buildApiUrl(ApiEndpoint.NetworkPing, { nonce: createRequestNonce() })
     const startedAt = performance.now()
     const response = await fetch(apiUrl, {
         cache: 'no-store',
@@ -164,7 +111,7 @@ const requestPing = async (): Promise<number> => {
 }
 
 const requestDownlink = async (): Promise<number> => {
-    const apiUrl = buildApiUrl('/api/network/download-test', {
+    const apiUrl = buildApiUrl(ApiEndpoint.NetworkDownload, {
         bytes: String(DOWNLOAD_TEST_BYTES),
         nonce: createRequestNonce(),
     })
@@ -179,7 +126,7 @@ const requestDownlink = async (): Promise<number> => {
     const payload = await response.arrayBuffer()
     const elapsedSeconds = (performance.now() - startedAt) / 1_000
     if (elapsedSeconds <= 0) {
-        throw new Error('Invalid elapsed time for /api/network/download-test')
+        throw new Error(`Invalid elapsed time for ${ApiEndpoint.NetworkDownload}`)
     }
 
     const downlinkMbps = (payload.byteLength * 8) / elapsedSeconds / 1_000_000
@@ -199,16 +146,5 @@ export const requestNetworkMetrics = async (): Promise<NetworkMetricsResponse> =
 }
 
 export const requestProjectInfo = async (): Promise<ProjectInfoResponse> => {
-    const apiUrl = buildApiUrl('/api/project')
-    const response = await fetch(apiUrl)
-    if (!response.ok) {
-        throw new Error(`Failed to load ${apiUrl}: ${response.status}`)
-    }
-
-    const payload: unknown = await response.json()
-    if (!isProjectInfoResponse(payload)) {
-        throw new Error('Invalid /api/project payload')
-    }
-
-    return payload
+    return fetchJson(ApiEndpoint.Project, isProjectPayload)
 }
