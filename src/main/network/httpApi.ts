@@ -16,6 +16,7 @@ export type NetworkMetricsResponse = {
     readonly ip: string
     readonly pingMs: number
     readonly downlinkMbps: number
+    readonly serverBaseUrl: string
 }
 
 export type ProjectInfoResponse = ProjectPayload
@@ -73,6 +74,15 @@ const fetchJson = async <TPayload>(
 }
 
 export const requestUser = async (): Promise<UserResponse> => {
+    if (window.desktopApi !== undefined) {
+        const desktopUserPayload = await window.desktopApi.getUser()
+        if (!isUserPayload(desktopUserPayload)) {
+            throw new Error('Invalid desktop user payload')
+        }
+
+        return desktopUserPayload
+    }
+
     return fetchJson(ApiEndpoint.User, isUserPayload)
 }
 
@@ -142,11 +152,13 @@ export const requestNetworkMetrics = async (): Promise<NetworkMetricsResponse> =
     const ip = await requestNetworkIp()
     const pingMs = await requestPing()
     const downlinkMbps = await requestDownlink()
+    const serverBaseUrl = `${window.location.protocol}//${window.location.hostname}:${PORT}`
 
     return {
         ip,
         pingMs,
         downlinkMbps,
+        serverBaseUrl,
     }
 }
 

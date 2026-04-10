@@ -18,6 +18,7 @@ type NetworkFieldKey =
     | 'location.hostname'
     | 'navigator.connection.rtt'
     | 'navigator.connection.downlink'
+    | 'server.baseUrl'
 
 type NetworkSectionValues = Readonly<Record<NetworkFieldKey, string>>
 type ProjectSectionValues = Readonly<Record<ProjectDataKey, string>>
@@ -26,12 +27,14 @@ const NETWORK_FIELD_KEYS: readonly NetworkFieldKey[] = [
     'location.hostname',
     'navigator.connection.rtt',
     'navigator.connection.downlink',
+    'server.baseUrl',
 ]
 
 const NETWORK_FALLBACK_VALUES: NetworkSectionValues = {
     'location.hostname': NETWORK_NOT_AVAILABLE_VALUE,
     'navigator.connection.rtt': NETWORK_NOT_AVAILABLE_VALUE,
     'navigator.connection.downlink': NETWORK_NOT_AVAILABLE_VALUE,
+    'server.baseUrl': NETWORK_NOT_AVAILABLE_VALUE,
 }
 
 const PROJECT_FALLBACK_VALUES: ProjectSectionValues = {
@@ -77,6 +80,7 @@ const buildNetworkSectionValues = (
         'location.hostname': networkMetrics.ip,
         'navigator.connection.rtt': `${networkMetrics.pingMs} ms`,
         'navigator.connection.downlink': `${networkMetrics.downlinkMbps} Mbps`,
+        'server.baseUrl': networkMetrics.serverBaseUrl,
     }
 }
 

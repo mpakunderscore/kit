@@ -182,7 +182,15 @@ export const APP_SECTIONS: readonly AppSection[] = [
             {
                 id: BlockId.BrowserNetworkKeys,
                 description: '',
-                fields: buildBrowserKeyFields(BROWSER_NETWORK_KEYS),
+                fields: [
+                    {
+                        id: 'server_base_url',
+                        keyTooltip: 'server.baseUrl',
+                        label: 'Server',
+                        value: '',
+                    },
+                    ...buildBrowserKeyFields(BROWSER_NETWORK_KEYS),
+                ],
             },
         ],
     },
