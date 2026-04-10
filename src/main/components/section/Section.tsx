@@ -28,7 +28,10 @@ export const Section = ({ section }: SectionProps) => {
             return (
                 <div className={'section_grid section_grid_project'}>
                     <div className={'section_grid_project_left'}>
-                        <Block block={projectPackageBlock} key={id + '_' + projectPackageBlock.id} />
+                        <Block
+                            block={projectPackageBlock}
+                            key={id + '_' + projectPackageBlock.id}
+                        />
                         <Block
                             block={projectDependenciesBlock}
                             key={id + '_' + projectDependenciesBlock.id}

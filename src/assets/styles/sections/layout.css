@@ -25,10 +25,6 @@
     justify-items: center;
 }
 
-.section_grid_single > .section_card {
-    width: min(var(--layout-header-max-width), 100%);
-}
-
 .section_grid_project_left {
     display: grid;
     align-content: start;
@@ -69,6 +65,10 @@
     border-radius: var(--radius-md);
     background: var(--color-accent-overlay);
     font-size: var(--font-size-body);
+}
+
+.section_grid_single > .section_card {
+    width: min(var(--layout-header-max-width), 100%);
 }
 
 .section_card_description {

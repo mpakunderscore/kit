@@ -242,7 +242,10 @@ const applyProjectDataToSections = (
                 return {
                     ...block,
                     fields: block.fields.map((field) => {
-                        if (field.keyTooltip === undefined || !isProjectFieldKey(field.keyTooltip)) {
+                        if (
+                            field.keyTooltip === undefined ||
+                            !isProjectFieldKey(field.keyTooltip)
+                        ) {
                             return field
                         }
 

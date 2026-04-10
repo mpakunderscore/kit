@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
-import type { SectionBlock, SectionFieldTone } from '@src/main/content/sections'
 import { getBrowserAllAvailableKeyDescription } from '@src/main/content/browser/browserAllAvailableKeyDescriptions'
+import type { SectionBlock, SectionFieldTone } from '@src/main/content/sections'
 import { isWebApiAvailable } from '@src/main/content/webApi/webApiAvailabilityChecks'
 import { getWebApiDescription } from '@src/main/content/webApi/webApiDescriptions'
 import { getWebApiPermissionDescription } from '@src/main/content/webApi/webApiPermissionDescriptions'

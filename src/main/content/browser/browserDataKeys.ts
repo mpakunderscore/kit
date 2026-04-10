@@ -91,23 +91,22 @@ export const BROWSER_ALL_AVAILABLE_KEYS = [
     'speechSynthesis',
 ] as const
 
-const BROWSER_HIDDEN_DUPLICATE_KEYS = [
-    'navigator.language',
-    'navigator.hardwareConcurrency',
-    'navigator.maxTouchPoints',
-    'navigator.deviceMemory',
-    'navigator.doNotTrack',
-    'navigator.webdriver',
-    'navigator.pdfViewerEnabled',
-    'screen.availWidth',
-    'screen.availHeight',
-    'screen.pixelDepth',
-    'window.innerWidth',
-    'window.innerHeight',
-    'location.href',
-    'location.origin',
-    'location.pathname',
-] as const
+type BrowserHiddenDuplicateKey =
+    | 'navigator.language'
+    | 'navigator.hardwareConcurrency'
+    | 'navigator.maxTouchPoints'
+    | 'navigator.deviceMemory'
+    | 'navigator.doNotTrack'
+    | 'navigator.webdriver'
+    | 'navigator.pdfViewerEnabled'
+    | 'screen.availWidth'
+    | 'screen.availHeight'
+    | 'screen.pixelDepth'
+    | 'window.innerWidth'
+    | 'window.innerHeight'
+    | 'location.href'
+    | 'location.origin'
+    | 'location.pathname'
 
 export const BROWSER_NETWORK_KEYS = [
     { key: 'location.hostname', value: 'IP' },
@@ -122,5 +121,5 @@ export type BrowserDataKeyItem = {
 
 export type BrowserDataKey =
     | (typeof BROWSER_UNIQUE_VALUE_KEYS)[number]['key']
-    | (typeof BROWSER_HIDDEN_DUPLICATE_KEYS)[number]
+    | BrowserHiddenDuplicateKey
     | (typeof BROWSER_NETWORK_KEYS)[number]['key']

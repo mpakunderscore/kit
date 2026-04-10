@@ -1,4 +1,4 @@
-import fileSystem from 'fs'
+import type fileSystem from 'fs'
 
 // Tick Aggregation Config
 export const LOG_AGGREGATE_TICKS =

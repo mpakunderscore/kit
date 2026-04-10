@@ -1,10 +1,8 @@
-import { BROWSER_ALL_AVAILABLE_KEYS } from '@src/main/content/browser/browserDataKeys'
+import type { BROWSER_ALL_AVAILABLE_KEYS } from '@src/main/content/browser/browserDataKeys'
 
 type BrowserAllAvailableKey = (typeof BROWSER_ALL_AVAILABLE_KEYS)[number]
 
-const BROWSER_ALL_AVAILABLE_KEY_DESCRIPTIONS: Readonly<
-    Record<BrowserAllAvailableKey, string>
-> = {
+const BROWSER_ALL_AVAILABLE_KEY_DESCRIPTIONS: Readonly<Record<BrowserAllAvailableKey, string>> = {
     globalThis: 'Global reference to the current JavaScript execution context.',
     window: 'Main browser window object for DOM and Web API access.',
     self: 'Reference to the current global scope (window in main thread).',

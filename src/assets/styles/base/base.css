@@ -11,15 +11,15 @@ body {
     overscroll-behavior-y: none;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 html.preload *,
 html.preload *::before,
 html.preload *::after {
     animation: none !important;
     transition: none !important;
-}
-
-* {
-    box-sizing: border-box;
 }
 
 body {
