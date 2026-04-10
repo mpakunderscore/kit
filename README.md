@@ -67,15 +67,41 @@ Output: `dist/release` (see `package.json` → `build`).
 
 [Capacitor](https://capacitorjs.com/) packages the **built** web client (`npm run build:client`) into native iOS/Android shells. HTTP traffic uses the same backend; reuse types and contracts from `src/shared`.
 
-**Constraint:** Capacitor is the chosen stack; native projects and npm scripts may be added over time (`cap sync`, [Xcode](https://developer.apple.com/xcode/), [Android Studio](https://developer.android.com/studio)).
+For native bundles that are not served over `http:`/`https:`, set **`VITE_API_BASE_URL`** (e.g. `http://<lan-ip>:<api-port>`) so the client can reach the API.
 
-### Development
+**Constraint:** Express does not run inside the WebView. Run `dev:server` (or deploy the API elsewhere) when the app expects the backend.
 
-After Capacitor is wired into the repo, the usual loop is: build the web app, sync native projects, run or open them from Xcode / Android Studio (exact commands will match the integrated setup).
+### npm scripts (Capacitor)
 
-### Build
+These are the only Capacitor-related shortcuts in `package.json`:
 
-Release builds go through the native toolchains (App Store, Play Store, or ad hoc) once the Capacitor projects exist.
+| Script | What it runs |
+| ------ | ------------ |
+| `npm run cap:copy:ios` | `cap copy ios` — copy the web build into the iOS project (no full `sync`). |
+| `npm run cap:copy:android` | `cap copy android` — same for Android. |
+| `npm run cap:sync:ios` | `build:client` then `cap sync ios` — web build + sync for iOS. |
+| `npm run cap:sync:android` | `build:client` then `cap sync android` — web build + sync for Android. |
+
+Use `npx cap` for everything else (see below).
+
+### Capacitor CLI not wrapped in npm scripts
+
+The following [Capacitor CLI](https://capacitorjs.com/docs/cli/commands) commands used to have `npm run cap:…` aliases but were removed from `package.json`. Run them from the repo root after `npm install` (local CLI: `npx cap …` or `./node_modules/.bin/cap …`):
+
+| CLI command | Purpose |
+| ----------- | ------- |
+| `npx cap add ios` / `npx cap add android` | Create the native `ios/` or `android/` project (one-time scaffolding). |
+| `npx cap sync` | Copy web assets and update native plugin dependencies for **both** platforms (without running `build:client` unless you do it yourself). |
+| `npx cap copy` | Copy the web build to **both** native projects (no platform suffix). |
+| `npx cap update` | Refresh native dependencies to match `package.json` (does not copy the web bundle). |
+| `npx cap open ios` / `npx cap open android` | Open **Xcode** or **Android Studio** for the project. |
+| `npx cap run ios` / `npx cap run android` | Sync (by default), build, and deploy to a simulator or device; supports flags such as `--live-reload` (see `npx cap run --help`). |
+| `npx cap build ios` / `npx cap build android` | Produce a release build via the native toolchains (signing options in `npx cap build --help`). |
+| `npx cap doctor` | Environment and setup diagnostics. |
+| `npx cap ls` | List installed Capacitor/Cordova plugins. |
+| `npx cap migrate` | Migrate the project across major Capacitor versions when upgrading. |
+
+For a full list: `npx cap --help`.
 
 ## Commands
 
@@ -85,6 +111,7 @@ Release builds go through the native toolchains (App Store, Play Store, or ad ho
 | `npm run check`           | Typecheck, lint, full build                      |
 | `npm run prisma:server:*` | Prisma CLI for the server database               |
 | `npm run prisma:app:*`    | Prisma CLI for the local app database (Electron) |
+| `npm run cap:*`           | Shortcuts for Capacitor copy/sync per platform; see **Mobile (Capacitor)** |
 
 ---
 
