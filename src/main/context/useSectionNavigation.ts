@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SectionId } from '@src/main/content/sectionIds'
 import type { MenuSection } from '@src/main/content/sections'
+import { getSectionFromPathname } from '@src/shared/contracts/sectionRoutes'
+
+const SMOOTH_SCROLL_FALLBACK_MS = 800
 
 const resolveActiveSectionId = (
     menuSections: readonly MenuSection[],
@@ -23,12 +26,19 @@ const resolveActiveSectionId = (
 }
 
 const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): SectionId | '' => {
-    if (menuSections.length === 0) return ''
-    if (typeof window === 'undefined') return menuSections[0]?.id ?? ''
+    if (menuSections.length === 0) {
+        return ''
+    }
+    if (typeof window === 'undefined') {
+        return menuSections[0]?.id ?? ''
+    }
 
-    const currentPosition = window.scrollY
+    const fromPath = getSectionFromPathname(window.location.pathname)
+    if (fromPath !== null) {
+        return fromPath
+    }
 
-    return resolveActiveSectionId(menuSections, currentPosition)
+    return resolveActiveSectionId(menuSections, window.scrollY)
 }
 
 type UseSectionNavigationValue = {
@@ -48,8 +58,25 @@ export const useSectionNavigation = (
         getInitialActiveSectionId(menuSections)
     )
 
-    const updateActiveSection = useCallback(() => {
-        if (menuSections.length === 0) return
+    const programmaticScrollTargetRef = useRef<SectionId | null>(null)
+    const smoothScrollFallbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const clearSmoothScrollFallbackTimer = useCallback(() => {
+        if (smoothScrollFallbackTimerRef.current !== null) {
+            clearTimeout(smoothScrollFallbackTimerRef.current)
+            smoothScrollFallbackTimerRef.current = null
+        }
+    }, [])
+
+    const endProgrammaticScroll = useCallback(() => {
+        programmaticScrollTargetRef.current = null
+        clearSmoothScrollFallbackTimer()
+    }, [clearSmoothScrollFallbackTimer])
+
+    const updateActiveSectionFromViewport = useCallback(() => {
+        if (menuSections.length === 0) {
+            return
+        }
 
         const currentPosition = window.scrollY
         const nextActiveSectionId = resolveActiveSectionId(menuSections, currentPosition)
@@ -62,7 +89,12 @@ export const useSectionNavigation = (
             const behavior = options?.behavior ?? 'smooth'
             const syncActiveSection = options?.syncActiveSection ?? true
             const targetElement = document.getElementById(sectionId)
-            if (!targetElement) return false
+            if (!targetElement) {
+                return false
+            }
+
+            endProgrammaticScroll()
+            programmaticScrollTargetRef.current = sectionId
 
             const targetTop = targetElement.getBoundingClientRect().top + window.scrollY
 
@@ -75,20 +107,55 @@ export const useSectionNavigation = (
                 setActiveSectionId(sectionId)
             }
 
+            if (behavior === 'smooth') {
+                clearSmoothScrollFallbackTimer()
+                smoothScrollFallbackTimerRef.current = setTimeout(() => {
+                    smoothScrollFallbackTimerRef.current = null
+                    endProgrammaticScroll()
+                }, SMOOTH_SCROLL_FALLBACK_MS)
+            } else {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        endProgrammaticScroll()
+                    })
+                })
+            }
+
             return true
         },
-        []
+        [clearSmoothScrollFallbackTimer, endProgrammaticScroll]
     )
 
     useEffect(() => {
-        window.addEventListener('scroll', updateActiveSection, { passive: true })
-        window.addEventListener('resize', updateActiveSection)
+        const handleScroll = () => {
+            if (programmaticScrollTargetRef.current !== null) {
+                return
+            }
+            updateActiveSectionFromViewport()
+        }
+
+        const handleResize = () => {
+            endProgrammaticScroll()
+            updateActiveSectionFromViewport()
+        }
+
+        const handleScrollEnd = () => {
+            if (programmaticScrollTargetRef.current === null) {
+                return
+            }
+            endProgrammaticScroll()
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        window.addEventListener('resize', handleResize)
+        window.addEventListener('scrollend', handleScrollEnd, { passive: true })
 
         return () => {
-            window.removeEventListener('scroll', updateActiveSection)
-            window.removeEventListener('resize', updateActiveSection)
+            window.removeEventListener('scroll', handleScroll)
+            window.removeEventListener('resize', handleResize)
+            window.removeEventListener('scrollend', handleScrollEnd)
         }
-    }, [updateActiveSection])
+    }, [endProgrammaticScroll, updateActiveSectionFromViewport])
 
     return {
         activeSectionId,

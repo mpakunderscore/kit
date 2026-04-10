@@ -25,6 +25,7 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
     const { activeSectionId, scrollToSection: scrollToSectionById } =
         useSectionNavigation(menuSections)
     const isPathSyncReadyRef = useRef(false)
+    const skipNextActiveSectionUrlEffectRef = useRef(false)
     const firstSectionId = menuSections[0]?.id ?? null
 
     const syncFromPathname = useCallback(
@@ -64,6 +65,7 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
             const targetPathname = getPathnameForSection(sectionId)
             const currentPathname = normalizePathname(window.location.pathname).toLowerCase()
             if (currentPathname !== targetPathname) {
+                skipNextActiveSectionUrlEffectRef.current = true
                 window.history.pushState(null, '', targetPathname)
             }
         },
@@ -96,6 +98,11 @@ export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 
     useEffect(() => {
         if (!isPathSyncReadyRef.current || activeSectionId === '') {
+            return
+        }
+
+        if (skipNextActiveSectionUrlEffectRef.current) {
+            skipNextActiveSectionUrlEffectRef.current = false
             return
         }
 
