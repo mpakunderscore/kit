@@ -4,7 +4,8 @@ import path from 'node:path'
 
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 
-import type { DesktopUserPayload } from '@electron/contracts/desktop'
+import type { UserPayload } from '@src/shared/contracts/api'
+
 import { PrismaClient } from '@electron/generated/prisma-app'
 
 const DATABASE_FILENAME = 'app.sqlite'
@@ -14,7 +15,7 @@ type StorageOptions = {
 }
 
 export type ElectronStorage = {
-    readonly getUser: () => Promise<DesktopUserPayload>
+    readonly getUser: () => Promise<UserPayload>
     readonly close: () => void
 }
 
@@ -27,7 +28,7 @@ export const createElectronStorage = (options: StorageOptions): ElectronStorage 
     const prisma = new PrismaClient({ adapter })
 
     return {
-        getUser: async (): Promise<DesktopUserPayload> => {
+        getUser: async (): Promise<UserPayload> => {
             const existing = await prisma.appUser.findUnique({ where: { id: 1 } })
             if (existing !== null) {
                 return {

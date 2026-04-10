@@ -1,13 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
-import type { DesktopUserPayload } from '@electron/contracts/desktop'
+import type { UserPayload } from '@src/shared/contracts/api'
 
-const DESKTOP_IPC_CHANNELS = {
-    userGet: 'desktop:user:get',
-} as const
+// eslint-disable-next-line no-restricted-imports -- Preload must resolve at runtime without path aliases in emitted JS.
+import { DESKTOP_IPC_CHANNELS } from './contracts/desktop'
 
 type DesktopApi = {
-    readonly getUser: () => Promise<DesktopUserPayload>
+    readonly getUser: () => Promise<UserPayload>
 }
 
 const desktopApi: DesktopApi = {
