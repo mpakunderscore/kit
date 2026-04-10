@@ -24,7 +24,7 @@
         // Ionic/Stencil typings occasionally conflict across versions; we don't want lib .d.ts to block app development.
         "skipLibCheck": true,
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
-        "types": ["node"]
+        "types": ["node", "vite/client"]
     },
     "include": ["src/**/*", "server/**/*"]
 }
