@@ -30,10 +30,24 @@ const PING_SAMPLE_COUNT = 3
 const DOWNLOAD_TEST_BYTES = 5_000_000
 const CLIENT_API_BASE_PATH = API_BASE_PATH
 
+const resolveServerOrigin = (): string => {
+    const fromEnv = API_BASE_URL.trim()
+    if (fromEnv.length > 0) {
+        return fromEnv.replace(/\/$/, '')
+    }
+
+    const { protocol, hostname } = window.location
+    if (protocol !== 'http:' && protocol !== 'https:') {
+        throw new Error(
+            'Set VITE_API_BASE_URL when the app is not served over http(s) (for example a Capacitor native bundle).'
+        )
+    }
+
+    return `${protocol}//${hostname}:${PORT}`
+}
+
 const buildApiUrl = (endpoint: ApiEndpoint, searchParams?: Record<string, string>): string => {
-    const url = new URL(
-        `${window.location.protocol}//${window.location.hostname}:${PORT}${CLIENT_API_BASE_PATH}${endpoint}`
-    )
+    const url = new URL(`${resolveServerOrigin()}${CLIENT_API_BASE_PATH}${endpoint}`)
     if (searchParams !== undefined) {
         for (const [key, value] of Object.entries(searchParams)) {
             url.searchParams.set(key, value)
@@ -176,7 +190,7 @@ export const requestNetworkMetrics = async (): Promise<NetworkMetricsResponse> =
     const ip = await requestNetworkIp()
     const pingMs = await requestPing()
     const downlinkMbps = await requestDownlink()
-    const serverBaseUrl = `${window.location.protocol}//${window.location.hostname}:${PORT}`
+    const serverBaseUrl = resolveServerOrigin()
 
     return {
         ip,

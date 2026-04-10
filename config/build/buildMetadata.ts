@@ -13,6 +13,7 @@ type ClientBuildMetadata = Readonly<
     CoreBuildMetadata & {
         NODE_ENV: string
         PORT: string
+        API_BASE_URL: string
     }
 >
 
@@ -64,5 +65,6 @@ export const createClientBuildMetadata = (
         ...createCoreBuildMetadata(projectRoot),
         NODE_ENV: JSON.stringify(env.NODE_ENV ?? process.env.NODE_ENV ?? 'development'),
         PORT: JSON.stringify(env.PORT ?? process.env.PORT ?? '4000'),
+        API_BASE_URL: JSON.stringify(env.VITE_API_BASE_URL ?? ''),
     }
 }

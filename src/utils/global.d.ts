@@ -11,6 +11,7 @@ declare global {
     const BUILD_TIME: string
     const NODE_ENV: string
     const PORT: string
+    const API_BASE_URL: string
 }
 
 declare module '*.css' {}
