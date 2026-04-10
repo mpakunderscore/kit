@@ -26,3 +26,8 @@ body {
     font-size: var(--font-size-body);
     font-family: var(--font-ui);
 }
+
+.loading {
+    min-height: var(--layout-section-min-height);
+    background: var(--color-surface-app);
+}

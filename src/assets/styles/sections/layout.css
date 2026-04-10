@@ -7,7 +7,7 @@
     align-items: center;
     justify-content: center;
     width: var(--layout-section-width);
-    height: var(--layout-section-min-height);
+    min-height: var(--layout-section-min-height);
     border-bottom: 1px solid var(--color-accent-overlay);
     scroll-margin-top: var(--layout-section-scroll-margin-top);
 }
