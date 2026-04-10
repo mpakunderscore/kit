@@ -1,13 +1,14 @@
 import {
-    BROWSER_ENVIRONMENT_KEYS,
+    BROWSER_ALL_AVAILABLE_KEYS,
     BROWSER_NETWORK_KEYS,
-    BROWSER_SESSION_STATE_KEYS,
-} from '@src/main/content/browserDataKeys'
-import { PROJECT_INFO_KEYS } from '@src/main/content/projectDataKeys'
+    BROWSER_UNIQUE_VALUE_KEYS,
+} from '@src/main/content/browser/browserDataKeys'
+import { PROJECT_INFO_KEYS } from '@src/main/content/project/projectDataKeys'
 import {
-    WEB_API_WITHOUT_PERMISSIONS_NAMES,
+    WEB_API_WITHOUT_PERMISSIONS_RISKY_NAMES,
+    WEB_API_WITHOUT_PERMISSIONS_STABLE_NAMES,
     WEB_API_WITH_PERMISSIONS_NAMES,
-} from '@src/main/content/webApiFullList'
+} from '@src/main/content/webApi/webApiFullList'
 
 export type SectionFieldTone = 'ok' | 'warn' | 'bad' | 'neutral'
 
@@ -49,6 +50,28 @@ const buildWebApiFields = (
     }))
 }
 
+const WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_SET = new Set<string>([
+    'Clipboard',
+    'Contact Picker',
+    'Idle Detection',
+    'Local Font Access',
+    'Notifications',
+    'Push',
+    'Screen Capture',
+    'Storage Access',
+    'Window Management',
+])
+
+const WEB_API_WITH_PERMISSIONS_DEVICE_SENSOR_NAMES: readonly string[] =
+    WEB_API_WITH_PERMISSIONS_NAMES.filter(
+        (apiName) => !WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_SET.has(apiName)
+    )
+
+const WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_NAMES: readonly string[] =
+    WEB_API_WITH_PERMISSIONS_NAMES.filter((apiName) =>
+        WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_SET.has(apiName)
+    )
+
 const toFieldId = (key: string): string => key.toLowerCase().replaceAll(/[^a-z0-9]+/g, '_')
 
 const buildBrowserKeyFields = (
@@ -58,6 +81,14 @@ const buildBrowserKeyFields = (
         id: toFieldId(key),
         keyTooltip: key,
         label: value,
+        value: '',
+    }))
+}
+
+const buildInlineLabelFields = (labels: readonly string[]): readonly SectionField[] => {
+    return labels.map((label) => ({
+        id: toFieldId(label),
+        label,
         value: '',
     }))
 }
@@ -82,7 +113,16 @@ export const APP_SECTIONS: readonly AppSection[] = [
                 id: 'web_api_with_permissions',
                 description: '',
                 fields: buildWebApiFields(
-                    WEB_API_WITH_PERMISSIONS_NAMES,
+                    WEB_API_WITH_PERMISSIONS_DEVICE_SENSOR_NAMES,
+                    'Permission required',
+                    'warn'
+                ),
+            },
+            {
+                id: 'web_api_with_permissions_browser_context',
+                description: '',
+                fields: buildWebApiFields(
+                    WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_NAMES,
                     'Permission required',
                     'warn'
                 ),
@@ -94,10 +134,19 @@ export const APP_SECTIONS: readonly AppSection[] = [
         label: 'Web API',
         blocks: [
             {
-                id: 'web_api_without_permissions',
+                id: 'web_api_without_permissions_stable',
                 description: '',
                 fields: buildWebApiFields(
-                    WEB_API_WITHOUT_PERMISSIONS_NAMES,
+                    WEB_API_WITHOUT_PERMISSIONS_STABLE_NAMES,
+                    'No permission required',
+                    'ok'
+                ),
+            },
+            {
+                id: 'web_api_without_permissions_risky',
+                description: '',
+                fields: buildWebApiFields(
+                    WEB_API_WITHOUT_PERMISSIONS_RISKY_NAMES,
                     'No permission required',
                     'ok'
                 ),
@@ -109,14 +158,14 @@ export const APP_SECTIONS: readonly AppSection[] = [
         label: 'Browser',
         blocks: [
             {
-                id: 'browser_environment_keys',
+                id: 'browser_unique_value_keys',
                 description: '',
-                fields: buildBrowserKeyFields(BROWSER_ENVIRONMENT_KEYS),
+                fields: buildBrowserKeyFields(BROWSER_UNIQUE_VALUE_KEYS),
             },
             {
-                id: 'browser_session_state_keys',
+                id: 'browser_all_available_keys',
                 description: '',
-                fields: buildBrowserKeyFields(BROWSER_SESSION_STATE_KEYS),
+                fields: buildInlineLabelFields(BROWSER_ALL_AVAILABLE_KEYS),
             },
         ],
     },
@@ -139,6 +188,16 @@ export const APP_SECTIONS: readonly AppSection[] = [
                 id: 'project_package_keys',
                 description: '',
                 fields: buildBrowserKeyFields(PROJECT_INFO_KEYS),
+            },
+            {
+                id: 'project_dependencies_library_versions',
+                description: '',
+                fields: [],
+            },
+            {
+                id: 'project_dev_dependencies_library_versions',
+                description: '',
+                fields: [],
             },
         ],
     },

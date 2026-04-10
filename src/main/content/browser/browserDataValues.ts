@@ -1,4 +1,4 @@
-import type { BrowserDataKey } from '@src/main/content/browserDataKeys'
+import type { BrowserDataKey } from '@src/main/content/browser/browserDataKeys'
 
 const NOT_AVAILABLE_VALUE = 'Not available'
 

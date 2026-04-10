@@ -213,9 +213,25 @@ export const WEB_API_WITHOUT_PERMISSIONS_LIST: readonly WebApiEntry[] = WEB_API_
     (entry) => !WEB_API_PERMISSION_REQUIRED_NAMES.has(entry.name)
 )
 
+export const WEB_API_WITHOUT_PERMISSIONS_STABLE_LIST: readonly WebApiEntry[] =
+    WEB_API_WITHOUT_PERMISSIONS_LIST.filter(
+        (entry) => entry.tags === undefined || entry.tags.length === 0
+    )
+
+export const WEB_API_WITHOUT_PERMISSIONS_RISKY_LIST: readonly WebApiEntry[] =
+    WEB_API_WITHOUT_PERMISSIONS_LIST.filter(
+        (entry) => entry.tags !== undefined && entry.tags.length > 0
+    )
+
 export const WEB_API_WITH_PERMISSIONS_NAMES: readonly string[] = WEB_API_WITH_PERMISSIONS_LIST.map(
     (entry) => entry.name
 )
 
 export const WEB_API_WITHOUT_PERMISSIONS_NAMES: readonly string[] =
     WEB_API_WITHOUT_PERMISSIONS_LIST.map((entry) => entry.name)
+
+export const WEB_API_WITHOUT_PERMISSIONS_STABLE_NAMES: readonly string[] =
+    WEB_API_WITHOUT_PERMISSIONS_STABLE_LIST.map((entry) => entry.name)
+
+export const WEB_API_WITHOUT_PERMISSIONS_RISKY_NAMES: readonly string[] =
+    WEB_API_WITHOUT_PERMISSIONS_RISKY_LIST.map((entry) => entry.name)
