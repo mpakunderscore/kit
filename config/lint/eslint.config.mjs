@@ -363,7 +363,7 @@ export default tseslint.config(
     // Logger implementations interact with the console directly by design.
     // ---------------------------------------------------------------------------
     {
-        files: ['server/lib/logger.ts'],
+        files: ['server/lib/logger.ts', 'src/utils/logger.ts', 'src/utils/logger/**/*.ts'],
         rules: {
             'no-console': 'off',
         },
