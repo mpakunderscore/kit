@@ -1,11 +1,12 @@
 import { createContext, type ReactNode, use } from 'react'
 
-import { MENU_SECTIONS } from '@src/main/content/sections'
+import type { SectionId } from '@src/main/content/sectionIds'
+import { useAppDataContext } from '@src/main/context/AppDataContext'
 import { useSectionNavigation } from '@src/main/context/useSectionNavigation'
 
 type NavigationContextValue = {
-    readonly activeSectionId: string
-    readonly scrollToSection: (sectionId: string) => void
+    readonly activeSectionId: SectionId | ''
+    readonly scrollToSection: (sectionId: SectionId) => void
 }
 
 const NavigationContext = createContext<NavigationContextValue | null>(null)
@@ -15,7 +16,8 @@ type NavigationProviderProps = {
 }
 
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
-    const { activeSectionId, scrollToSection } = useSectionNavigation(MENU_SECTIONS)
+    const { menuSections } = useAppDataContext()
+    const { activeSectionId, scrollToSection } = useSectionNavigation(menuSections)
 
     return (
         <NavigationContext value={{ activeSectionId, scrollToSection }}>

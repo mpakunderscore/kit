@@ -1,9 +1,29 @@
+export enum WebApiPermissionResult {
+    Granted = 'granted',
+    Denied = 'denied',
+    Prompt = 'prompt',
+    Unsupported = 'unsupported',
+    Error = 'error',
+}
+
+enum PermissionApiName {
+    Accelerometer = 'accelerometer',
+    Camera = 'camera',
+    ClipboardRead = 'clipboard-read',
+    Geolocation = 'geolocation',
+    IdleDetection = 'idle-detection',
+    Microphone = 'microphone',
+    Notifications = 'notifications',
+    Push = 'push',
+    SpeakerSelection = 'speaker-selection',
+}
+
 export type WebApiPermissionRequestResult =
-    | 'granted'
-    | 'denied'
-    | 'prompt'
-    | 'unsupported'
-    | 'error'
+    | WebApiPermissionResult.Granted
+    | WebApiPermissionResult.Denied
+    | WebApiPermissionResult.Prompt
+    | WebApiPermissionResult.Unsupported
+    | WebApiPermissionResult.Error
 
 type PermissionRequestHandler = () => Promise<WebApiPermissionRequestResult>
 
@@ -84,7 +104,7 @@ const withDocument = <T>(reader: (doc: DocumentWithExperimentalApis) => T): T | 
 }
 
 const queryPermissionState = async (
-    permissionName: string
+    permissionName: PermissionApiName
 ): Promise<PermissionState | undefined> => {
     const permissionsApi = withNavigator((nav) => nav.permissions)
     if (permissionsApi === undefined) return undefined
@@ -100,40 +120,40 @@ const queryPermissionState = async (
 }
 
 const permissionStateToResult = (state: PermissionState): WebApiPermissionRequestResult => {
-    if (state === 'granted') return 'granted'
-    if (state === 'denied') return 'denied'
-    return 'prompt'
+    if (state === 'granted') return WebApiPermissionResult.Granted
+    if (state === 'denied') return WebApiPermissionResult.Denied
+    return WebApiPermissionResult.Prompt
 }
 
 const requestByPermissionsApi = async (
-    permissionName: string
+    permissionName: PermissionApiName
 ): Promise<WebApiPermissionRequestResult> => {
     const state = await queryPermissionState(permissionName)
-    if (state === undefined) return 'unsupported'
+    if (state === undefined) return WebApiPermissionResult.Unsupported
     return permissionStateToResult(state)
 }
 
 const requestNotificationPermission: PermissionRequestHandler = async () => {
-    if (typeof Notification === 'undefined') return 'unsupported'
+    if (typeof Notification === 'undefined') return WebApiPermissionResult.Unsupported
 
     try {
         const result = await Notification.requestPermission()
-        if (result === 'granted') return 'granted'
-        if (result === 'denied') return 'denied'
-        return 'prompt'
+        if (result === 'granted') return WebApiPermissionResult.Granted
+        if (result === 'denied') return WebApiPermissionResult.Denied
+        return WebApiPermissionResult.Prompt
     } catch {
-        return 'error'
+        return WebApiPermissionResult.Error
     }
 }
 
 const requestGeolocationPermission: PermissionRequestHandler = async () => {
     const geolocation = withNavigator((nav) => nav.geolocation)
-    if (geolocation === undefined) return 'unsupported'
+    if (geolocation === undefined) return WebApiPermissionResult.Unsupported
 
     return new Promise((resolve) => {
         geolocation.getCurrentPosition(
-            () => resolve('granted'),
-            () => resolve('denied'),
+            () => resolve(WebApiPermissionResult.Granted),
+            () => resolve(WebApiPermissionResult.Denied),
             { enableHighAccuracy: false, maximumAge: 0, timeout: 10_000 }
         )
     })
@@ -141,200 +161,201 @@ const requestGeolocationPermission: PermissionRequestHandler = async () => {
 
 const requestMediaStreamPermission: PermissionRequestHandler = async () => {
     const getUserMedia = withNavigator((nav) => nav.mediaDevices?.getUserMedia)
-    if (getUserMedia === undefined) return 'unsupported'
+    if (getUserMedia === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         const stream = await getUserMedia.call(navigator.mediaDevices, { audio: true })
         stream.getTracks().forEach((track) => track.stop())
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestClipboardPermission: PermissionRequestHandler = async () => {
     const readText = withNavigator((nav) => nav.clipboard?.readText)
     if (readText === undefined) {
-        return requestByPermissionsApi('clipboard-read')
+        return requestByPermissionsApi(PermissionApiName.ClipboardRead)
     }
 
     try {
         await readText.call(navigator.clipboard)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return requestByPermissionsApi('clipboard-read')
+        return requestByPermissionsApi(PermissionApiName.ClipboardRead)
     }
 }
 
 const requestScreenCapturePermission: PermissionRequestHandler = async () => {
     const getDisplayMedia = withNavigator((nav) => nav.mediaDevices?.getDisplayMedia)
-    if (getDisplayMedia === undefined) return 'unsupported'
+    if (getDisplayMedia === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         const stream = await getDisplayMedia.call(navigator.mediaDevices, { video: true })
         stream.getTracks().forEach((track) => track.stop())
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestStorageAccessPermission: PermissionRequestHandler = async () => {
     const requestStorageAccess = withDocument((doc) => doc.requestStorageAccess)
     if (requestStorageAccess === undefined) {
-        return 'unsupported'
+        return WebApiPermissionResult.Unsupported
     }
 
     try {
         await requestStorageAccess.call(document as DocumentWithExperimentalApis)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebBluetoothPermission: PermissionRequestHandler = async () => {
     const requestDevice = withNavigator((nav) => nav.bluetooth?.requestDevice)
-    if (requestDevice === undefined) return 'unsupported'
+    if (requestDevice === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestDevice({ acceptAllDevices: true })
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebUsbPermission: PermissionRequestHandler = async () => {
     const requestDevice = withNavigator((nav) => nav.usb?.requestDevice)
-    if (requestDevice === undefined) return 'unsupported'
+    if (requestDevice === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestDevice({ filters: [] })
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebSerialPermission: PermissionRequestHandler = async () => {
     const requestPort = withNavigator((nav) => nav.serial?.requestPort)
-    if (requestPort === undefined) return 'unsupported'
+    if (requestPort === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestPort({ filters: [] })
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebHidPermission: PermissionRequestHandler = async () => {
     const requestDevice = withNavigator((nav) => nav.hid?.requestDevice)
-    if (requestDevice === undefined) return 'unsupported'
+    if (requestDevice === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestDevice({ filters: [] })
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebMidiPermission: PermissionRequestHandler = async () => {
     const requestMIDIAccess = withNavigator((nav) => nav.requestMIDIAccess)
-    if (requestMIDIAccess === undefined) return 'unsupported'
+    if (requestMIDIAccess === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestMIDIAccess.call(navigator)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebNfcPermission: PermissionRequestHandler = async () => {
     const NDEFReader = withWindow((win) => win.NDEFReader)
-    if (NDEFReader === undefined) return 'unsupported'
+    if (NDEFReader === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         const reader = new NDEFReader()
         await reader.scan()
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWebXrPermission: PermissionRequestHandler = async () => {
     const xrNavigator = withNavigator((nav) => nav.xr)
     const requestSession = xrNavigator?.requestSession
-    if (requestSession === undefined) return 'unsupported'
+    if (requestSession === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         await requestSession.call(xrNavigator, 'immersive-vr')
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestWindowManagementPermission: PermissionRequestHandler = async () => {
     const getScreenDetails = withWindow((win) => win.getScreenDetails)
     if (getScreenDetails === undefined) {
-        return 'unsupported'
+        return WebApiPermissionResult.Unsupported
     }
 
     try {
         await getScreenDetails.call(window as WindowWithExperimentalApis)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestContactPickerPermission: PermissionRequestHandler = async () => {
     const ContactPicker = withWindow((win) => win.ContactPicker)
-    if (ContactPicker === undefined) return 'unsupported'
+    if (ContactPicker === undefined) return WebApiPermissionResult.Unsupported
 
     try {
         const picker = new ContactPicker()
         await picker.select(['name'], { multiple: false })
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestIdleDetectionPermission: PermissionRequestHandler = async () => {
     const requestPermission = withWindow((win) => win.IdleDetector?.requestPermission)
-    if (requestPermission === undefined) return requestByPermissionsApi('idle-detection')
+    if (requestPermission === undefined)
+        return requestByPermissionsApi(PermissionApiName.IdleDetection)
 
     try {
         const state = await requestPermission()
         return permissionStateToResult(state)
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestLocalFontAccessPermission: PermissionRequestHandler = async () => {
     const queryLocalFonts = withWindow((win) => win.queryLocalFonts)
     if (queryLocalFonts === undefined) {
-        return 'unsupported'
+        return WebApiPermissionResult.Unsupported
     }
 
     try {
         await queryLocalFonts.call(window as WindowWithExperimentalApis)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestDeviceOrientationPermission: PermissionRequestHandler = async () => {
     if (typeof DeviceOrientationEvent === 'undefined') {
-        return requestByPermissionsApi('accelerometer')
+        return requestByPermissionsApi(PermissionApiName.Accelerometer)
     }
 
     const DeviceOrientationEventWithPermission =
@@ -342,35 +363,37 @@ const requestDeviceOrientationPermission: PermissionRequestHandler = async () =>
             readonly requestPermission?: () => Promise<'granted' | 'denied'>
         }
     if (typeof DeviceOrientationEventWithPermission.requestPermission !== 'function') {
-        return requestByPermissionsApi('accelerometer')
+        return requestByPermissionsApi(PermissionApiName.Accelerometer)
     }
 
     try {
         const result = await DeviceOrientationEventWithPermission.requestPermission()
         return permissionStateToResult(result)
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
 const requestAudioOutputDevicesPermission: PermissionRequestHandler = async () => {
     const selectAudioOutput = withNavigator((nav) => nav.mediaDevices?.selectAudioOutput)
-    if (selectAudioOutput === undefined) return requestByPermissionsApi('speaker-selection')
+    if (selectAudioOutput === undefined) {
+        return requestByPermissionsApi(PermissionApiName.SpeakerSelection)
+    }
 
     try {
         await selectAudioOutput.call(navigator.mediaDevices)
-        return 'granted'
+        return WebApiPermissionResult.Granted
     } catch {
-        return 'denied'
+        return WebApiPermissionResult.Denied
     }
 }
 
-const PERMISSION_API_NAME_BY_WEB_API_NAME: Readonly<Record<string, string>> = {
-    'Barcode Detection': 'camera',
-    Geolocation: 'geolocation',
-    Notifications: 'notifications',
-    Push: 'push',
-    'Web Speech': 'microphone',
+const PERMISSION_API_NAME_BY_WEB_API_NAME: Readonly<Record<string, PermissionApiName>> = {
+    'Barcode Detection': PermissionApiName.Camera,
+    Geolocation: PermissionApiName.Geolocation,
+    Notifications: PermissionApiName.Notifications,
+    Push: PermissionApiName.Push,
+    'Web Speech': PermissionApiName.Microphone,
 }
 
 const WEB_API_PERMISSION_REQUESTERS: Readonly<Record<string, PermissionRequestHandler>> = {
@@ -403,7 +426,7 @@ const WEB_API_PERMISSION_REQUESTERS: Readonly<Record<string, PermissionRequestHa
 export const requestWebApiPermission = async (
     apiName: string
 ): Promise<WebApiPermissionRequestResult> => {
-    if (typeof window === 'undefined') return 'unsupported'
+    if (typeof window === 'undefined') return WebApiPermissionResult.Unsupported
 
     const permissionName = PERMISSION_API_NAME_BY_WEB_API_NAME[apiName]
     if (permissionName !== undefined) {
@@ -415,13 +438,13 @@ export const requestWebApiPermission = async (
 
     const permissionRequester = WEB_API_PERMISSION_REQUESTERS[apiName]
     if (permissionRequester === undefined) {
-        if (permissionName === undefined) return 'unsupported'
+        if (permissionName === undefined) return WebApiPermissionResult.Unsupported
         return requestByPermissionsApi(permissionName)
     }
 
     try {
         const requestResult = await permissionRequester()
-        if (requestResult !== 'prompt' || permissionName === undefined) {
+        if (requestResult !== WebApiPermissionResult.Prompt || permissionName === undefined) {
             return requestResult
         }
 
@@ -429,6 +452,6 @@ export const requestWebApiPermission = async (
         if (stateAfterRequest === undefined) return requestResult
         return permissionStateToResult(stateAfterRequest)
     } catch {
-        return 'error'
+        return WebApiPermissionResult.Error
     }
 }

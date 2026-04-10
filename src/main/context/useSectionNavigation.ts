@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import type { SectionId } from '@src/main/content/sectionIds'
 import type { MenuSection } from '@src/main/content/sections'
 
 const resolveActiveSectionId = (
     menuSections: readonly MenuSection[],
     currentPosition: number
-): string => {
-    let nextActiveSectionId = menuSections[0]?.id ?? ''
+): SectionId | '' => {
+    let nextActiveSectionId: SectionId | '' = menuSections[0]?.id ?? ''
     const activationPosition = currentPosition + window.innerHeight / 2
 
     for (const section of menuSections) {
@@ -21,7 +22,7 @@ const resolveActiveSectionId = (
     return nextActiveSectionId
 }
 
-const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): string => {
+const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): SectionId | '' => {
     if (menuSections.length === 0) return ''
     if (typeof window === 'undefined') return menuSections[0]?.id ?? ''
 
@@ -31,14 +32,14 @@ const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): string
 }
 
 type UseSectionNavigationValue = {
-    readonly activeSectionId: string
-    readonly scrollToSection: (sectionId: string) => void
+    readonly activeSectionId: SectionId | ''
+    readonly scrollToSection: (sectionId: SectionId) => void
 }
 
 export const useSectionNavigation = (
     menuSections: readonly MenuSection[]
 ): UseSectionNavigationValue => {
-    const [activeSectionId, setActiveSectionId] = useState<string>(() =>
+    const [activeSectionId, setActiveSectionId] = useState<SectionId | ''>(() =>
         getInitialActiveSectionId(menuSections)
     )
 
@@ -51,7 +52,7 @@ export const useSectionNavigation = (
         setActiveSectionId(nextActiveSectionId)
     }, [menuSections])
 
-    const scrollToSection = useCallback((sectionId: string) => {
+    const scrollToSection = useCallback((sectionId: SectionId) => {
         const targetElement = document.getElementById(sectionId)
         if (!targetElement) return
 

@@ -4,13 +4,19 @@ import {
     BROWSER_UNIQUE_VALUE_KEYS,
 } from '@src/main/content/browser/browserDataKeys'
 import { PROJECT_INFO_KEYS } from '@src/main/content/project/projectDataKeys'
+import { BlockId, SectionId } from '@src/main/content/sectionIds'
 import {
     WEB_API_WITHOUT_PERMISSIONS_RISKY_NAMES,
     WEB_API_WITHOUT_PERMISSIONS_STABLE_NAMES,
     WEB_API_WITH_PERMISSIONS_NAMES,
 } from '@src/main/content/webApi/webApiFullList'
 
-export type SectionFieldTone = 'ok' | 'warn' | 'bad' | 'neutral'
+export enum SectionFieldTone {
+    Ok = 'ok',
+    Warn = 'warn',
+    Bad = 'bad',
+    Neutral = 'neutral',
+}
 
 export type SectionField = {
     readonly id: string
@@ -23,17 +29,17 @@ export type SectionField = {
 export type SectionBlock = {
     readonly description: string
     readonly fields: readonly SectionField[]
-    readonly id: string
+    readonly id: BlockId
 }
 
 export type AppSection = {
     readonly blocks: readonly SectionBlock[]
-    readonly id: string
+    readonly id: SectionId
     readonly label: string
 }
 
 export type MenuSection = {
-    readonly id: string
+    readonly id: SectionId
     readonly label: string
 }
 
@@ -95,115 +101,110 @@ const buildInlineLabelFields = (labels: readonly string[]): readonly SectionFiel
 
 export const APP_SECTIONS: readonly AppSection[] = [
     {
-        id: 'user_section',
+        id: SectionId.User,
         label: 'User',
         blocks: [
             {
-                id: 'user_identity',
+                id: BlockId.UserIdentity,
                 description: '',
                 fields: [],
             },
         ],
     },
     {
-        id: 'web_api_permissions_section',
+        id: SectionId.WebApiPermissions,
         label: 'Permissions',
         blocks: [
             {
-                id: 'web_api_with_permissions',
+                id: BlockId.WebApiWithPermissions,
                 description: '',
                 fields: buildWebApiFields(
                     WEB_API_WITH_PERMISSIONS_DEVICE_SENSOR_NAMES,
                     'Permission required',
-                    'warn'
+                    SectionFieldTone.Warn
                 ),
             },
             {
-                id: 'web_api_with_permissions_browser_context',
+                id: BlockId.WebApiWithPermissionsBrowserContext,
                 description: '',
                 fields: buildWebApiFields(
                     WEB_API_WITH_PERMISSIONS_BROWSER_CONTEXT_NAMES,
                     'Permission required',
-                    'warn'
+                    SectionFieldTone.Warn
                 ),
             },
         ],
     },
     {
-        id: 'web_api_availability_section',
+        id: SectionId.WebApiAvailability,
         label: 'Web API',
         blocks: [
             {
-                id: 'web_api_without_permissions_stable',
+                id: BlockId.WebApiWithoutPermissionsStable,
                 description: '',
                 fields: buildWebApiFields(
                     WEB_API_WITHOUT_PERMISSIONS_STABLE_NAMES,
                     'No permission required',
-                    'ok'
+                    SectionFieldTone.Ok
                 ),
             },
             {
-                id: 'web_api_without_permissions_risky',
+                id: BlockId.WebApiWithoutPermissionsRisky,
                 description: '',
                 fields: buildWebApiFields(
                     WEB_API_WITHOUT_PERMISSIONS_RISKY_NAMES,
                     'No permission required',
-                    'ok'
+                    SectionFieldTone.Ok
                 ),
             },
         ],
     },
     {
-        id: 'browser_section',
+        id: SectionId.Browser,
         label: 'Browser',
         blocks: [
             {
-                id: 'browser_unique_value_keys',
+                id: BlockId.BrowserUniqueValueKeys,
                 description: '',
                 fields: buildBrowserKeyFields(BROWSER_UNIQUE_VALUE_KEYS),
             },
             {
-                id: 'browser_all_available_keys',
+                id: BlockId.BrowserAllAvailableKeys,
                 description: '',
                 fields: buildInlineLabelFields(BROWSER_ALL_AVAILABLE_KEYS),
             },
         ],
     },
     {
-        id: 'network_section',
+        id: SectionId.Network,
         label: 'Network',
         blocks: [
             {
-                id: 'browser_network_keys',
+                id: BlockId.BrowserNetworkKeys,
                 description: '',
                 fields: buildBrowserKeyFields(BROWSER_NETWORK_KEYS),
             },
         ],
     },
     {
-        id: 'project_section',
+        id: SectionId.Project,
         label: 'Project',
         blocks: [
             {
-                id: 'project_package_keys',
+                id: BlockId.ProjectPackageKeys,
                 description: '',
                 fields: buildBrowserKeyFields(PROJECT_INFO_KEYS),
             },
             {
-                id: 'project_dependencies_library_versions',
+                id: BlockId.ProjectDependenciesLibraryVersions,
                 description: '',
                 fields: [],
             },
             {
-                id: 'project_dev_dependencies_library_versions',
+                id: BlockId.ProjectDevDependenciesLibraryVersions,
                 description: '',
                 fields: [],
             },
         ],
     },
 ] as const
-
-export const MENU_SECTIONS: readonly MenuSection[] = APP_SECTIONS.map(({ id, label }) => ({
-    id,
-    label,
-}))

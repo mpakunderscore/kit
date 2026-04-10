@@ -1,4 +1,5 @@
 import { Block } from '@src/main/components/section/Block'
+import { BlockId, SectionId } from '@src/main/content/sectionIds'
 import type { AppSection } from '@src/main/content/sections'
 
 type SectionProps = {
@@ -7,54 +8,44 @@ type SectionProps = {
 
 export const Section = ({ section }: SectionProps) => {
     const { blocks, id } = section
-    const isFirstSection = id === 'user_section'
-    const isProjectSection = id === 'project_section'
+    const isFirstSection = id === SectionId.User
+    const isProjectSection = id === SectionId.Project
     const gridClassName = blocks.length === 1 ? 'section_grid section_grid_single' : 'section_grid'
 
-    const projectPackageBlock = blocks.find((block) => block.id === 'project_package_keys')
-    const projectDependenciesBlock = blocks.find(
-        (block) => block.id === 'project_dependencies_library_versions'
+    const blocksById = new Map(blocks.map((block) => [block.id, block]))
+    const projectPackageBlock = blocksById.get(BlockId.ProjectPackageKeys)
+    const projectDependenciesBlock = blocksById.get(BlockId.ProjectDependenciesLibraryVersions)
+    const projectDevDependenciesBlock = blocksById.get(
+        BlockId.ProjectDevDependenciesLibraryVersions
     )
-    const projectDevDependenciesBlock = blocks.find(
-        (block) => block.id === 'project_dev_dependencies_library_versions'
-    )
-    const sectionGrid = (() => {
-        if (
-            isProjectSection &&
-            projectPackageBlock !== undefined &&
-            projectDependenciesBlock !== undefined &&
-            projectDevDependenciesBlock !== undefined
-        ) {
-            return (
-                <div className={'section_grid section_grid_project'}>
-                    <div className={'section_grid_project_left'}>
-                        <Block
-                            block={projectPackageBlock}
-                            key={id + '_' + projectPackageBlock.id}
-                        />
-                        <Block
-                            block={projectDependenciesBlock}
-                            key={id + '_' + projectDependenciesBlock.id}
-                        />
-                    </div>
-                    <div className={'section_grid_project_right'}>
-                        <Block
-                            block={projectDevDependenciesBlock}
-                            key={id + '_' + projectDevDependenciesBlock.id}
-                        />
-                    </div>
-                </div>
-            )
-        }
 
-        return (
+    const sectionGrid =
+        isProjectSection &&
+        projectPackageBlock !== undefined &&
+        projectDependenciesBlock !== undefined &&
+        projectDevDependenciesBlock !== undefined ? (
+            <div className={'section_grid section_grid_project'}>
+                <div className={'section_grid_project_left'}>
+                    <Block block={projectPackageBlock} key={id + '_' + projectPackageBlock.id} />
+                    <Block
+                        block={projectDependenciesBlock}
+                        key={id + '_' + projectDependenciesBlock.id}
+                    />
+                </div>
+                <div className={'section_grid_project_right'}>
+                    <Block
+                        block={projectDevDependenciesBlock}
+                        key={id + '_' + projectDevDependenciesBlock.id}
+                    />
+                </div>
+            </div>
+        ) : (
             <div className={gridClassName}>
                 {blocks.map((block) => {
                     return <Block block={block} key={id + '_' + block.id} />
                 })}
             </div>
         )
-    })()
 
     return (
         <section className={'section'} id={id}>
