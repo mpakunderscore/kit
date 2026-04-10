@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
         plugins: createClientPlugins({ clientIndexFile, projectRoot }),
         root: projectRoot,
         publicDir: path.resolve(projectRoot, 'public'),
+        base: './',
         build: {
             outDir: path.resolve(projectRoot, 'dist/client'),
             emptyOutDir: true,

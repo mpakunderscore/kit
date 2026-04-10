@@ -49,7 +49,9 @@ export const createCoreBuildMetadata = (projectRoot: string): CoreBuildMetadata 
     return {
         VERSION: JSON.stringify(readPackageVersion(projectRoot)),
         GIT: JSON.stringify(getGitValue(projectRoot, 'git rev-parse --short HEAD', 'unknown')),
-        BRANCH: JSON.stringify(getGitValue(projectRoot, 'git rev-parse --abbrev-ref HEAD', 'unknown')),
+        BRANCH: JSON.stringify(
+            getGitValue(projectRoot, 'git rev-parse --abbrev-ref HEAD', 'unknown')
+        ),
         BUILD_TIME: JSON.stringify(formatBuildTime24h(new Date())),
     }
 }

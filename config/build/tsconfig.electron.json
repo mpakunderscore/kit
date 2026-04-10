@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "../../electron",
+        "outDir": "../../dist/electron",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "noEmit": false,
+        "lib": ["ES2022", "DOM"],
+        "types": ["node", "electron", "better-sqlite3"],
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true
+    },
+    "include": ["../../electron/**/*.ts"],
+    "exclude": ["../../node_modules", "../../dist", "../../server", "../../src"]
+}
