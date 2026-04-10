@@ -13,6 +13,6 @@ declare global {
     const PORT: string
 }
 
-declare module '*.css'
+declare module '*.css' {}
 
 export {}
