@@ -33,3 +33,4 @@ AGENTS.md
 /.idea/
 .DS_Store
 /electron/generated/
+/android/
