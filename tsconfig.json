@@ -26,5 +26,5 @@
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "types": ["node", "vite/client"]
     },
-    "include": ["src/**/*", "server/**/*"]
+    "include": ["src/**/*", "server/**/*", "capacitor.config.ts"]
 }
