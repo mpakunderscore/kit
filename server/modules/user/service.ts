@@ -1,6 +1,5 @@
-import type { UserPayload } from '../../../src/shared/contracts/api'
-
 import { prisma } from '@server/lib/prisma'
+import type { UserPayload } from '@src/shared/contracts/api'
 
 export const resolveUserPayload = async (): Promise<UserPayload> => {
     const existingUser = await prisma.user.findFirst({

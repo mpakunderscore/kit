@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 
-import type { NetworkIpPayload } from '../../../src/shared/contracts/api'
+import type { NetworkIpPayload } from '@src/shared/contracts/api'
 
 const DOWNLOAD_TEST_DEFAULT_BYTES = 5_000_000
 const DOWNLOAD_TEST_MIN_BYTES = 1_000_000

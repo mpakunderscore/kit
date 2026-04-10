@@ -15,7 +15,7 @@ const builtins = new Set([
 ])
 
 const isExternal = (id: string): boolean => {
-    if (id.startsWith('@server/')) {
+    if (id.startsWith('@server/') || id.startsWith('@src/')) {
         return false
     }
     if (builtins.has(id)) {
@@ -33,6 +33,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@server': path.resolve(projectRoot, 'server'),
+            '@src': path.resolve(projectRoot, 'src'),
         },
     },
     build: {

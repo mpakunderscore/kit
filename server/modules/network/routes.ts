@@ -1,13 +1,12 @@
 import type { Express } from 'express'
 
-import { ApiEndpoint } from '../../../src/shared/contracts/api'
-
 import {
     createDownloadPayload,
     NETWORK_NO_CACHE_HEADERS,
     parseDownloadTestBytes,
     resolveNetworkIpPayload,
 } from '@server/modules/network/service'
+import { ApiEndpoint } from '@src/shared/contracts/api'
 
 export const registerNetworkRoutes = (app: Express): void => {
     app.get(ApiEndpoint.NetworkIp, (request, response) => {
@@ -20,7 +19,7 @@ export const registerNetworkRoutes = (app: Express): void => {
         response.status(204).send()
     })
 
-    app.get(ApiEndpoint.NetworkDownloadTest, (request, response) => {
+    app.get(ApiEndpoint.NetworkDownload, (request, response) => {
         const payloadSize = parseDownloadTestBytes(request.query.bytes)
         response.set({
             ...NETWORK_NO_CACHE_HEADERS,

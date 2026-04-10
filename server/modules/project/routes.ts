@@ -1,8 +1,7 @@
 import type { Express } from 'express'
 
-import { ApiEndpoint } from '../../../src/shared/contracts/api'
-
 import { resolveProjectPayload } from '@server/modules/project/service'
+import { ApiEndpoint } from '@src/shared/contracts/api'
 
 export const registerProjectRoutes = (app: Express): void => {
     app.get(ApiEndpoint.Project, async (_request, response, next) => {

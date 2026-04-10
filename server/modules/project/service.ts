@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import type { ProjectLibraryPayload, ProjectPayload } from '../../../src/shared/contracts/api'
+import type { ProjectLibraryPayload, ProjectPayload } from '@src/shared/contracts/api'
 
 type PackageJson = Readonly<Record<string, unknown>>
 
