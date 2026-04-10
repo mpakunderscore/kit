@@ -19,7 +19,7 @@ export default tseslint.config(
     // Global ignores.
     // ---------------------------------------------------------------------------
     {
-        ignores: ['dist', 'node_modules', 'android', 'ios'],
+        ignores: ['dist', 'node_modules', 'android', 'ios', 'electron/generated/**'],
     },
 
     // ---------------------------------------------------------------------------
@@ -90,6 +90,7 @@ export default tseslint.config(
                     pathGroups: [
                         { pattern: 'react', group: 'external', position: 'before' },
                         { pattern: '@/**', group: 'internal', position: 'after' },
+                        { pattern: '@electron/**', group: 'internal', position: 'after' },
                     ],
                     pathGroupsExcludedImportTypes: ['react'],
                     'newlines-between': 'always',
@@ -318,6 +319,22 @@ export default tseslint.config(
         files: ['**/*.{ts,tsx}'],
         rules: {
             'no-console': 'error',
+        },
+    },
+
+    // ---------------------------------------------------------------------------
+    // Electron main-process code runs in Node.js / CommonJS context.
+    // ---------------------------------------------------------------------------
+    {
+        files: ['electron/**/*.{ts,js}'],
+        languageOptions: {
+            parserOptions: {
+                projectService: false,
+                project: path.resolve(repoRoot, 'config/build/tsconfig.electron.json'),
+            },
+        },
+        rules: {
+            'no-console': 'off',
         },
     },
 
