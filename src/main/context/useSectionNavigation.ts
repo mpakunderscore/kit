@@ -33,7 +33,12 @@ const getInitialActiveSectionId = (menuSections: readonly MenuSection[]): Sectio
 
 type UseSectionNavigationValue = {
     readonly activeSectionId: SectionId | ''
-    readonly scrollToSection: (sectionId: SectionId) => void
+    readonly scrollToSection: (sectionId: SectionId, options?: ScrollToSectionOptions) => boolean
+}
+
+type ScrollToSectionOptions = {
+    readonly behavior?: ScrollBehavior
+    readonly syncActiveSection?: boolean
 }
 
 export const useSectionNavigation = (
@@ -52,17 +57,28 @@ export const useSectionNavigation = (
         setActiveSectionId(nextActiveSectionId)
     }, [menuSections])
 
-    const scrollToSection = useCallback((sectionId: SectionId) => {
-        const targetElement = document.getElementById(sectionId)
-        if (!targetElement) return
+    const scrollToSection = useCallback(
+        (sectionId: SectionId, options?: ScrollToSectionOptions): boolean => {
+            const behavior = options?.behavior ?? 'smooth'
+            const syncActiveSection = options?.syncActiveSection ?? true
+            const targetElement = document.getElementById(sectionId)
+            if (!targetElement) return false
 
-        const targetTop = targetElement.getBoundingClientRect().top + window.scrollY
+            const targetTop = targetElement.getBoundingClientRect().top + window.scrollY
 
-        window.scrollTo({
-            behavior: 'smooth',
-            top: Math.max(targetTop, 0),
-        })
-    }, [])
+            window.scrollTo({
+                behavior,
+                top: Math.max(targetTop, 0),
+            })
+
+            if (syncActiveSection) {
+                setActiveSectionId(sectionId)
+            }
+
+            return true
+        },
+        []
+    )
 
     useEffect(() => {
         window.addEventListener('scroll', updateActiveSection, { passive: true })

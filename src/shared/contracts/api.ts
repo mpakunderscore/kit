@@ -1,9 +1,15 @@
+export const API_BASE_PATH = '/api'
+
 export enum ApiEndpoint {
-    User = '/api/user',
-    NetworkIp = '/api/network/ip',
-    NetworkPing = '/api/network/ping',
-    NetworkDownload = '/api/network/download',
-    Project = '/api/project',
+    User = '/user',
+    NetworkIp = '/network/ip',
+    NetworkPing = '/network/ping',
+    NetworkDownload = '/network/download',
+    Project = '/project',
+}
+
+export const resolveApiEndpoint = (endpoint: ApiEndpoint): string => {
+    return `${API_BASE_PATH}${endpoint}`
 }
 
 export type UserPayload = {

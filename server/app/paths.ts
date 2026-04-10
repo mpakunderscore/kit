@@ -3,6 +3,7 @@ import path from 'path'
 
 export type AppStaticPaths = {
     distDir: string
+    appIndexFile: string
 }
 
 export const resolveAppStaticPaths = (serverDirname: string): AppStaticPaths => {
@@ -19,5 +20,8 @@ export const resolveAppStaticPaths = (serverDirname: string): AppStaticPaths => 
             existsSync(path.join(candidateDir, 'index.html'))
         ) ?? distDirCandidates.at(-1)!
 
-    return { distDir }
+    return {
+        distDir,
+        appIndexFile: path.join(distDir, 'index.html'),
+    }
 }

@@ -6,20 +6,20 @@ import {
     parseDownloadTestBytes,
     resolveNetworkIpPayload,
 } from '@server/modules/network/service'
-import { ApiEndpoint } from '@src/shared/contracts/api'
+import { API_BASE_PATH, ApiEndpoint } from '@src/shared/contracts/api'
 
 export const registerNetworkRoutes = (app: Express): void => {
-    app.get(ApiEndpoint.NetworkIp, (request, response) => {
+    app.get(`${API_BASE_PATH}${ApiEndpoint.NetworkIp}`, (request, response) => {
         response.set(NETWORK_NO_CACHE_HEADERS)
         response.json(resolveNetworkIpPayload(request))
     })
 
-    app.get(ApiEndpoint.NetworkPing, (_request, response) => {
+    app.get(`${API_BASE_PATH}${ApiEndpoint.NetworkPing}`, (_request, response) => {
         response.set(NETWORK_NO_CACHE_HEADERS)
         response.status(204).send()
     })
 
-    app.get(ApiEndpoint.NetworkDownload, (request, response) => {
+    app.get(`${API_BASE_PATH}${ApiEndpoint.NetworkDownload}`, (request, response) => {
         const payloadSize = parseDownloadTestBytes(request.query.bytes)
         response.set({
             ...NETWORK_NO_CACHE_HEADERS,

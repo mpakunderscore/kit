@@ -1,7 +1,9 @@
 import {
+    API_BASE_PATH,
     ApiEndpoint,
     isNetworkIpPayload,
     isProjectPayload,
+    resolveApiEndpoint,
     isUserPayload,
     type ProjectLibraryPayload,
     type ProjectPayload,
@@ -22,10 +24,11 @@ export type ProjectLibraryResponse = ProjectLibraryPayload
 
 const PING_SAMPLE_COUNT = 3
 const DOWNLOAD_TEST_BYTES = 5_000_000
+const CLIENT_API_BASE_PATH = API_BASE_PATH
 
 const buildApiUrl = (endpoint: ApiEndpoint, searchParams?: Record<string, string>): string => {
     const url = new URL(
-        `${window.location.protocol}//${window.location.hostname}:${PORT}${endpoint}`
+        `${window.location.protocol}//${window.location.hostname}:${PORT}${CLIENT_API_BASE_PATH}${endpoint}`
     )
     if (searchParams !== undefined) {
         for (const [key, value] of Object.entries(searchParams)) {
@@ -126,7 +129,9 @@ const requestDownlink = async (): Promise<number> => {
     const payload = await response.arrayBuffer()
     const elapsedSeconds = (performance.now() - startedAt) / 1_000
     if (elapsedSeconds <= 0) {
-        throw new Error(`Invalid elapsed time for ${ApiEndpoint.NetworkDownload}`)
+        throw new Error(
+            `Invalid elapsed time for ${resolveApiEndpoint(ApiEndpoint.NetworkDownload)}`
+        )
     }
 
     const downlinkMbps = (payload.byteLength * 8) / elapsedSeconds / 1_000_000
