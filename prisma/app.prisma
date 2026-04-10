@@ -1,0 +1,17 @@
+datasource db {
+    provider = "sqlite"
+}
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../electron/generated/prisma-app"
+}
+
+model AppUser {
+    id        Int      @id @default(1)
+    uuid      String
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt      @map("updated_at")
+
+    @@map("app_user")
+}

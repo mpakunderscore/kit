@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 
 import { defineConfig, env } from 'prisma/config'
 
-const databaseUrl = env('DATABASE_URL')
+const databaseUrl = env('APP_DATABASE_URL')
 const databasePath = databaseUrl.slice('file:'.length)
 const normalizedDatabaseUrl =
     databaseUrl.startsWith('file:') &&
@@ -15,7 +15,10 @@ const normalizedDatabaseUrl =
         : databaseUrl
 
 export default defineConfig({
-    schema: '../../prisma/main.prisma',
+    schema: '../../prisma/app.prisma',
+    migrations: {
+        path: '../../prisma/migrations-app',
+    },
     datasource: {
         url: normalizedDatabaseUrl,
     },
